@@ -80,7 +80,7 @@ fun LoginScreen(
             enabled = !isLoading,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Iniciar sesión")
+            Text("Iniciar sesión prueba")
         }
 
         errorMessage?.let {
