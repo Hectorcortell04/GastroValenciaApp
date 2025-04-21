@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.hectorgonzalez.gastrovalenciaapp"
-    compileSdk = 34
+    compileSdk = 35 // ✅ actualizado desde 34 a 35
 
     defaultConfig {
         applicationId = "com.hectorgonzalez.gastrovalenciaapp"
         minSdk = 33
-        targetSdk = 34
+        targetSdk = 35 // ✅ actualizado desde 34 a 35
         versionCode = 1
         versionName = "1.0"
 
@@ -50,7 +50,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
