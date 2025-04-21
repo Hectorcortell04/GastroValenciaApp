@@ -1,4 +1,4 @@
-package com.hectorgonzalez.gastrovalenciaapp.presentation.login
+package com.hectorgonzalez.gastrovalenciaapp.presentation.screens.login
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
