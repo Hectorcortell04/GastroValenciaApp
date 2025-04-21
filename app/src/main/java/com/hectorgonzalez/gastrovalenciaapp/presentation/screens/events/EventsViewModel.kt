@@ -18,6 +18,8 @@ class EventsViewModel : ViewModel() {
         EventRepository(RetrofitClient.api)
     )
 
+
+
     init {
         loadEvents()
     }
