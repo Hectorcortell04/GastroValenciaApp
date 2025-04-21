@@ -80,7 +80,7 @@ fun LoginScreen(
             enabled = !isLoading,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Iniciar sesión prueba ari")
+            Text("Iniciar sesión")
         }
 
         errorMessage?.let {
