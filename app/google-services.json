@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "664480527182",
+    "project_id": "gastrovalencia-hector",
+    "storage_bucket": "gastrovalencia-hector.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:664480527182:android:7c16a774876e133c88a41f",
+        "android_client_info": {
+          "package_name": "com.hectorgonzalez.gastrovalenciaapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALLx3Tb9pWyWyFMQAhoqf8k8wfenTzHbU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

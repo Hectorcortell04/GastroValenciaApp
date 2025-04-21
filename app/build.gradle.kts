@@ -1,16 +1,18 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.services)
 }
 
 android {
     namespace = "com.hectorgonzalez.gastrovalenciaapp"
-    compileSdk = 35 // ✅ actualizado desde 34 a 35
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.hectorgonzalez.gastrovalenciaapp"
         minSdk = 33
-        targetSdk = 35 // ✅ actualizado desde 34 a 35
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -65,4 +67,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.firebase.auth.ktx)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
 }
