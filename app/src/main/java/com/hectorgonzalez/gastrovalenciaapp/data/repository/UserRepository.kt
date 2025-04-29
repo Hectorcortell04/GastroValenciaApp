@@ -18,5 +18,5 @@ fun UserDto.toUser(): User =
         name = this.name,
         email = this.email,
         firebaseUid = this.firebaseUid,
-        registrationDate = LocalDateTime.parse(this.registrationDate.toString())
+        registrationDate = LocalDateTime.parse(this.registrationDate)
     )
