@@ -76,4 +76,9 @@ dependencies {
     implementation(libs.retrofit)
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2")
+    // módulo principal de Kotlin para Jackson
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.0")
+    // soporte para Java 8+ Date/Time (JSR‐310)
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.0")
+
 }
