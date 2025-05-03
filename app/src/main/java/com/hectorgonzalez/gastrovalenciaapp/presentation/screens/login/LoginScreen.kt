@@ -42,7 +42,6 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Button(onClick = { viewModel.loadUsers() }) { Text(text = "try load users call") }
         Text("Iniciar Sesión", fontSize = 24.sp)
 
         Spacer(modifier = Modifier.height(16.dp))

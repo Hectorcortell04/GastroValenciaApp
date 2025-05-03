@@ -11,8 +11,4 @@ data class EventDto(
     val price: Double,
     val description: String,
     val duration: String
-) {
-    fun toDomain(): Event {
-        return Event(id, name, category, location, date, price, description, duration)
-    }
-}
+)

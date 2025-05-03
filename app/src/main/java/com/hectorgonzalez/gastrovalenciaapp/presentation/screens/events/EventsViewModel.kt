@@ -1,37 +1,39 @@
-package com.hectorgonzalez.gastrovalenciaapp.presentation.screens.events
+package com.hectorgonzalez.gastrovalenciaapp.presentation.viewmodel
 
+import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hectorgonzalez.gastrovalenciaapp.data.datasource.user.retrofitClient.RetrofitClient
-import com.hectorgonzalez.gastrovalenciaapp.data.repository.EventRepository
 import com.hectorgonzalez.gastrovalenciaapp.domain.entity.Event
-import com.hectorgonzalez.gastrovalenciaapp.domain.useCase.GetEventsUseCase
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import com.hectorgonzalez.gastrovalenciaapp.domain.useCase.EventsUseCase
 import kotlinx.coroutines.launch
 
-/*class EventsViewModel : ViewModel() {
-    private val _events = MutableStateFlow<List<Event>>(emptyList())
-    val events: StateFlow<List<Event>> = _events
+class EventViewModel(
+    private val eventsUseCase: EventsUseCase = EventsUseCase()
+) : ViewModel() {
 
-    private val getEventsUseCase = GetEventsUseCase(
-        EventRepository(RetrofitClient.api)
-    )
+    var events by mutableStateOf<List<Event>>(emptyList())
+        private set
 
+    var isLoading by mutableStateOf(false)
+        private set
 
+    var errorMessage by mutableStateOf<String?>(null)
+        private set
 
     init {
-        loadEvents()
+        fetchEvents()
     }
 
-    private fun loadEvents() {
+    fun fetchEvents() {
         viewModelScope.launch {
+            isLoading = true
             try {
-                val result = getEventsUseCase()
-                _events.value = result
+                events = eventsUseCase.getEvents()
             } catch (e: Exception) {
-                e.printStackTrace()
+                errorMessage = e.localizedMessage ?: "Error desconocido"
+            } finally {
+                isLoading = false
             }
         }
     }
-}*/
+}
