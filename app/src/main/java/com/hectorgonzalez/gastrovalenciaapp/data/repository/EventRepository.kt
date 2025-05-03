@@ -14,18 +14,17 @@ class EventRepository(
     suspend fun getEvents(): List<Event> {
         return remoteDataSource.getAllEvents().map { it.toDomain() }
     }
+}
 
-    private fun EventDto.toDomain(): Event {
-        return Event(
-            id = this.id.toInt(),
-            name = this.name,
-            category = this.category,
-            location = this.location,
-            date = this.date,
-            price = this.price,
-            description = this.description,
-            duration = this.duration
-        )
-    }
-
+private fun EventDto.toDomain(): Event {
+    return Event(
+        id = this.id.toInt(),
+        name = this.name,
+        category = this.category,
+        location = this.location,
+        date = this.date,
+        price = this.price,
+        description = this.description,
+        duration = this.duration
+    )
 }

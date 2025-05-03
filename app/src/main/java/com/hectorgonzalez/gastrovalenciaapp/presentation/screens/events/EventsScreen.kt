@@ -53,7 +53,7 @@ fun EventsScreen(
         ) {
             items(5) {
                 EventCard(
-                    imageUrl = "https://picsum.photos/800/400?random=$it", // imagen aleatoria
+                    imageUrl = "https://media.istockphoto.com/id/1389348844/es/foto/foto-de-estudio-de-una-hermosa-joven-sonriendo-mientras-est%C3%A1-de-pie-sobre-un-fondo-gris.jpg?s=2048x2048&w=is&k=20&c=VZNaxuI_YA8ikuMh_0BH75LVYggIYrAjkVjBpP0dIxs=", // imagen aleatoria  https://picsum.photos/800/400?random=$it
                     rating = "4,0",
                     timeAgo = "Hace 3 horas",
                     description = "El menú de Margarito es una auténtica celebración de los sabores mediterráneos...",
