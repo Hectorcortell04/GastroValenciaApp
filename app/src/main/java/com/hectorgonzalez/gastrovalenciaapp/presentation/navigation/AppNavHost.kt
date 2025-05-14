@@ -1,15 +1,12 @@
 package com.hectorgonzalez.gastrovalenciaapp.navigation
 
+import ProfileScreen
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.google.firebase.auth.FirebaseAuth
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.events.EventsScreen
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.login.LoginScreen
-import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.profile.ProfileScreen
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.restaurants.RestaurantsScreen
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.splash.SplashScreen
 

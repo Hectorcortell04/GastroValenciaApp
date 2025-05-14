@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.hectorgonzalez.gastrovalenciaapp.data.datasource.event.dto.EventDto
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.components.EventCard
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.login.LoginViewModel
 import com.hectorgonzalez.gastrovalenciaapp.presentation.viewmodel.EventViewModel
@@ -33,40 +34,44 @@ fun EventsScreen(
     viewModel: EventViewModel = viewModel()
 ) {
     var searchText by remember { mutableStateOf("") }
+    val events = viewModel.events
+    val isLoading = viewModel.isLoading
+    val error = viewModel.errorMessage
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        // 🔍 Buscador
         OutlinedTextField(
             value = searchText,
             onValueChange = { searchText = it },
             placeholder = { Text("Buscar") },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Buscar") },
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 📋 Lista de eventos (dummy por ahora)
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(5) {
-                EventCard(
-                    imageUrl = "https://media.istockphoto.com/id/1389348844/es/foto/foto-de-estudio-de-una-hermosa-joven-sonriendo-mientras-est%C3%A1-de-pie-sobre-un-fondo-gris.jpg?s=2048x2048&w=is&k=20&c=VZNaxuI_YA8ikuMh_0BH75LVYggIYrAjkVjBpP0dIxs=", // imagen aleatoria  https://picsum.photos/800/400?random=$it
-                    rating = "4,0",
-                    timeAgo = "Hace 3 horas",
-                    description = "El menú de Margarito es una auténtica celebración de los sabores mediterráneos...",
-                    authorName = "Susana Monzó",
-                    authorDesc = "Restaurante Margarito",
-                    likes = 124,
-                    comments = 20
-                )
+        if (isLoading) {
+            Text("Cargando eventos...")
+        } else if (error != null) {
+            Text("Error: $error")
+        } else {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(events.size) { index ->
+                    val event = events[index]
+                    EventCard(
+                        event = event,
+                        imageUrl = "https://res.cloudinary.com/dpgda2bnc/image/upload/v1746443722/Perfil_1_cyk1iy.png=${event.id}",
+                        isLiked = false,
+                        onLikeClick = {}
+                    )
+                }
             }
+
         }
     }
-
 }
+
 
 @Preview(showBackground = true)
 @Composable

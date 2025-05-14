@@ -24,7 +24,7 @@ class EventViewModel(
         fetchEvents()
     }
 
-    fun fetchEvents() {
+    private fun fetchEvents() {
         viewModelScope.launch {
             isLoading = true
             try {
