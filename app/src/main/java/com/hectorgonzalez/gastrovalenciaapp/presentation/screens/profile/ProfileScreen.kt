@@ -18,6 +18,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -26,6 +27,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,11 +39,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.google.firebase.auth.FirebaseAuth
 import com.hectorgonzalez.gastrovalenciaapp.R
 
@@ -49,32 +55,49 @@ fun ProfileScreen(
     onLogout: () -> Unit = {},
     navigateToTermsAndConditions: () -> Unit = {},
     navigateToPrivacyPolitics: () -> Unit = {},
-    navigateToFavorites: () -> Unit = {}
+    navigateToFavorites: () -> Unit = {},
+    viewModel: ProfileViewModel = viewModel()
 ) {
-    val user = FirebaseAuth.getInstance().currentUser
-    val email = user?.email
-    val name = user?.displayName
+    val context = LocalContext.current
+    val user by viewModel.user.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
     var showLogoutDialog by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        TopAppBar()
-        UserProfileSection(
-            userName = name ?: "...",
-            userImg = "",
-            userMail = email ?: "..."
-        )
-        MenuOptions(
-            onLogOut = { showLogoutDialog = true },
-            navigateToTermsAndConditions = navigateToTermsAndConditions,
-            navigateToPrivacyPolitics = navigateToPrivacyPolitics,
-            navigateToFavorites = navigateToFavorites
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        AppVersionFooter()
+    LaunchedEffect(Unit) {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        uid?.let {
+            viewModel.loadUser(it, context)
+        }
+    }
+
+    if (isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+        ) {
+            TopAppBar()
+            UserProfileSection(
+                userName = user?.name ?: "...",
+                userImg = "", //TODO add userimage
+                userMail = user?.email ?: "..."
+            )
+            MenuOptions(
+                onLogOut = { showLogoutDialog = true },
+                navigateToTermsAndConditions = navigateToTermsAndConditions,
+                navigateToPrivacyPolitics = navigateToPrivacyPolitics,
+                navigateToFavorites = navigateToFavorites
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            AppVersionFooter()
+        }
     }
 
     // Dialog de confirmación para cerrar sesión
@@ -82,6 +105,7 @@ fun ProfileScreen(
         LogoutConfirmationDialog(
             onConfirm = {
                 FirebaseAuth.getInstance().signOut()
+                viewModel.clearUserData(context)
                 onLogout()
                 showLogoutDialog = false
             },
@@ -172,7 +196,7 @@ fun TopAppBar() {
 @Composable
 fun UserProfileSection(
     userName: String,
-    userImg: String = "",
+    userImg: String? = null,
     userMail: String = ""
 ) {
     Column(
@@ -181,14 +205,28 @@ fun UserProfileSection(
             .padding(top = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painter = painterResource(id = android.R.drawable.ic_menu_gallery), // Replace with actual image resource
-            contentDescription = "Profile Picture", //TODO añadir imagen back
-            modifier = Modifier
-                .size(80.dp)
-                .clip(CircleShape),
-            contentScale = ContentScale.Crop
-        )
+        if (userImg != null && userImg.isNotEmpty()) {
+            AsyncImage(
+                model = userImg,
+                contentDescription = "Profile Picture",
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop,
+                error = painterResource(id = android.R.drawable.ic_menu_gallery),
+                placeholder = painterResource(id = android.R.drawable.ic_menu_gallery)
+            )
+        } else {
+            Image(
+                painter = painterResource(id = android.R.drawable.ic_menu_gallery),
+                contentDescription = "Profile Picture",
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
+            )
+        }
+
         Text(
             text = userName,
             fontSize = 18.sp,
@@ -252,7 +290,8 @@ fun MenuOption(drawableId: Int, text: String, showChevron: Boolean, onClick: () 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -264,10 +303,7 @@ fun MenuOption(drawableId: Int, text: String, showChevron: Boolean, onClick: () 
             text = text,
             modifier = Modifier
                 .weight(1f)
-                .padding(start = 16.dp)
-                .clickable {
-                    onClick()
-                },
+                .padding(start = 16.dp),
             fontSize = 16.sp,
         )
 
@@ -312,13 +348,5 @@ fun AppVersionFooter() {
                 color = Color.Gray
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ProfileScreenPreview() {
-    MaterialTheme {
-        ProfileScreen()
     }
 }

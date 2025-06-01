@@ -6,7 +6,7 @@ import java.util.Date
 import kotlin.reflect.jvm.internal.impl.descriptors.Visibilities.Local
 
 data class UserDto(
-    val id: Long,
+    val id: Int,
     val name: String,
     val email: String,
     val firebaseUid: String,

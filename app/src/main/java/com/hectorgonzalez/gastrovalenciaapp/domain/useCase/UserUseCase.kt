@@ -8,4 +8,7 @@ class UsersUseCase(
 ) {
     suspend fun getUsers(): List<User> =
         repository.getAllUsers()
+
+    suspend fun getUserId(uid:String) =
+        repository.getUserId(uid)
 }

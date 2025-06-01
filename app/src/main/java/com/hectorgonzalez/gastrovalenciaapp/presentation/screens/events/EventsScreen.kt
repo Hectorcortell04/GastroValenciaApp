@@ -19,13 +19,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun EventsScreen(
-    navigateToEventDetail: () -> Unit,
+    navigateToEventDetail: (Int) -> Unit, // Cambiar para recibir ID
     viewModel: EventViewModel = viewModel()
 ) {
     var searchText by remember { mutableStateOf("") }
@@ -38,7 +37,10 @@ fun EventsScreen(
         .padding(16.dp)) {
         OutlinedTextField(
             value = searchText,
-            onValueChange = { searchText = it },
+            onValueChange = {
+                searchText = it
+                viewModel.searchEventsByName(it)
+            },
             placeholder = { Text("Buscar") },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Buscar") },
             modifier = Modifier.fillMaxWidth()
@@ -58,21 +60,15 @@ fun EventsScreen(
                     val event = events[index]
                     EventCard(
                         event = event,
-                        imageUrl = "https://www.viaempresa.cat/uploads/s1/25/84/04/94/paelles-valencia.jpeg", //todo añadir de back
+                        imageUrl = "https://www.viaempresa.cat/uploads/s1/25/84/04/94/paelles-valencia.jpeg",
                         isLiked = false,
                         onLikeClick = {},
-                        onCardClick = navigateToEventDetail
+                        onCardClick = {
+                            navigateToEventDetail(event.id) // Pasar el ID del evento
+                        }
                     )
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun EventsScreenPreview() {
-    com.hectorgonzalez.gastrovalenciaapp.ui.theme.GastroValenciaAppTheme {
-        EventsScreen({})
     }
 }

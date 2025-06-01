@@ -9,4 +9,7 @@ class UserDataSource(
 ) {
     suspend fun fetchUsers(): List<UserDto> =
         api.getUsers()
+
+    suspend fun getUserId(uid:String) : UserDto =
+        api.getUserId(uid)
 }

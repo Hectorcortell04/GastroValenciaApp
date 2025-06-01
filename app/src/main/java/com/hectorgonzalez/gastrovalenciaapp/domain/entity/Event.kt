@@ -9,5 +9,5 @@ data class Event(
     val time: String,
     val price: Double,
     val description: String,
-    val duration: String
+    val duration: String,
 )

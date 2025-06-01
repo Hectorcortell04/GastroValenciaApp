@@ -10,6 +10,9 @@ class UserRepository(
 ) {
     suspend fun getAllUsers(): List<User> =
         remoteDataSource.fetchUsers().map { it.toUser() }
+
+    suspend fun getUserId(uid:String) : User =
+        remoteDataSource.getUserId(uid).toUser()
 }
 
 fun UserDto.toUser(): User =

@@ -3,7 +3,7 @@ package com.hectorgonzalez.gastrovalenciaapp.domain.entity
 import java.time.LocalDateTime
 
 data class User(
-    val id: Long,
+    val id: Int,
     val name: String,
     val email: String,
     val firebaseUid: String,

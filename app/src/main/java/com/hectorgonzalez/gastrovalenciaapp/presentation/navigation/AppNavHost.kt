@@ -2,8 +2,10 @@ package com.hectorgonzalez.gastrovalenciaapp.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.hectorgonzalez.gastrovalenciaapp.presentation.favorites.FavoritesScreen
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.eventDetail.EventDetailScreen
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.events.EventsScreen
@@ -21,7 +23,9 @@ sealed class AppScreens(val route: String) {
     data object Events : AppScreens("events")
     data object Restaurants : AppScreens("restaurants")
     data object Profile : AppScreens("profile")
-    data object EventDetail : AppScreens("event")
+    data object EventDetail : AppScreens("event/{eventId}") {
+        fun createRoute(eventId: Int) = "event/$eventId"
+    }
     data object RestaurantDetail : AppScreens("restaurant")
     data object TermsAndConditions : AppScreens("termsAndConditions")
     data object PrivacyPolitics : AppScreens("privacyPolitics")
@@ -61,8 +65,8 @@ fun AppNavHost(navController: NavHostController) {
 
         composable(AppScreens.Events.route) {
             EventsScreen(
-                navigateToEventDetail = {
-                    navController.navigate(AppScreens.EventDetail.route)
+                navigateToEventDetail = { eventId ->
+                    navController.navigate(AppScreens.EventDetail.createRoute(eventId)) // ✅ Usa createRoute con el ID
                 }
             )
         }
@@ -90,12 +94,18 @@ fun AppNavHost(navController: NavHostController) {
                 },
                 navigateToFavorites = {
                     navController.navigate(AppScreens.Favorites.route)
-                }
+                },
+
             )
         }
 
-        composable(AppScreens.EventDetail.route) {
+        composable(
+            route = AppScreens.EventDetail.route,
+            arguments = listOf(navArgument("eventId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val eventId = backStackEntry.arguments?.getInt("eventId") ?: 0
             EventDetailScreen(
+                eventId = eventId,
                 onBackClick = { navController.popBackStack() }
             )
         }
