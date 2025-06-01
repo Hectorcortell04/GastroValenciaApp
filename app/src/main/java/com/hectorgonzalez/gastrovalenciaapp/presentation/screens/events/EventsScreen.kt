@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -20,17 +19,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.hectorgonzalez.gastrovalenciaapp.data.datasource.event.dto.EventDto
-import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.components.EventCard
-import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.login.LoginViewModel
-import com.hectorgonzalez.gastrovalenciaapp.presentation.viewmodel.EventViewModel
 
 @Composable
 fun EventsScreen(
+    navigateToEventDetail: () -> Unit,
     viewModel: EventViewModel = viewModel()
 ) {
     var searchText by remember { mutableStateOf("") }
@@ -38,7 +33,9 @@ fun EventsScreen(
     val isLoading = viewModel.isLoading
     val error = viewModel.errorMessage
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)) {
         OutlinedTextField(
             value = searchText,
             onValueChange = { searchText = it },
@@ -61,22 +58,21 @@ fun EventsScreen(
                     val event = events[index]
                     EventCard(
                         event = event,
-                        imageUrl = "https://res.cloudinary.com/dpgda2bnc/image/upload/v1746443722/Perfil_1_cyk1iy.png=${event.id}",
+                        imageUrl = "https://www.viaempresa.cat/uploads/s1/25/84/04/94/paelles-valencia.jpeg", //todo añadir de back
                         isLiked = false,
-                        onLikeClick = {}
+                        onLikeClick = {},
+                        onCardClick = navigateToEventDetail
                     )
                 }
             }
-
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
 fun EventsScreenPreview() {
     com.hectorgonzalez.gastrovalenciaapp.ui.theme.GastroValenciaAppTheme {
-        EventsScreen()
+        EventsScreen({})
     }
 }

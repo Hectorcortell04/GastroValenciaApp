@@ -26,10 +26,10 @@ class RestaurantsViewModel(
         private set
 
     init {
-        //fetchRestaurants()
+        fetchRestaurants()
     }
 
-    fun fetchRestaurants() {
+    private fun fetchRestaurants() {
         viewModelScope.launch {
             isLoading = true
             try {

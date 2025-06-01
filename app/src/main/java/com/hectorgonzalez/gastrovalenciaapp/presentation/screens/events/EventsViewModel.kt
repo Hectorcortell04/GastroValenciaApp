@@ -1,4 +1,4 @@
-package com.hectorgonzalez.gastrovalenciaapp.presentation.viewmodel
+package com.hectorgonzalez.gastrovalenciaapp.presentation.screens.events
 
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel

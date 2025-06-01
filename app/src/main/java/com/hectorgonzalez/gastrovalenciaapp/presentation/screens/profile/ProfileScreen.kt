@@ -1,18 +1,40 @@
+package com.hectorgonzalez.gastrovalenciaapp.presentation.screens.profile
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -20,80 +42,162 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.FirebaseAuth
+import com.hectorgonzalez.gastrovalenciaapp.R
 
 @Composable
 fun ProfileScreen(
-    onLogout: () -> Unit = {}
+    onLogout: () -> Unit = {},
+    navigateToTermsAndConditions: () -> Unit = {},
+    navigateToPrivacyPolitics: () -> Unit = {},
+    navigateToFavorites: () -> Unit = {}
 ) {
     val user = FirebaseAuth.getInstance().currentUser
-    val email = user?.email ?: "Usuario desconocido"
+    val email = user?.email
+    val name = user?.displayName
+    var showLogoutDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
-        // Top bar with app name and search icon
         TopAppBar()
-
-        // User profile section
-        UserProfileSection()
-
-        // Menu options
-        MenuOptions(onLogOut = onLogout)
-
-        // App version at bottom
+        UserProfileSection(
+            userName = name ?: "...",
+            userImg = "",
+            userMail = email ?: "..."
+        )
+        MenuOptions(
+            onLogOut = { showLogoutDialog = true },
+            navigateToTermsAndConditions = navigateToTermsAndConditions,
+            navigateToPrivacyPolitics = navigateToPrivacyPolitics,
+            navigateToFavorites = navigateToFavorites
+        )
         Spacer(modifier = Modifier.weight(1f))
         AppVersionFooter()
     }
-}
 
-@Composable
-fun TopAppBar() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = "PERFIL",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold
+    // Dialog de confirmación para cerrar sesión
+    if (showLogoutDialog) {
+        LogoutConfirmationDialog(
+            onConfirm = {
+                FirebaseAuth.getInstance().signOut()
+                onLogout()
+                showLogoutDialog = false
+            },
+            onDismiss = {
+                showLogoutDialog = false
+            }
         )
     }
 }
 
 @Composable
-fun UserProfileSection() {
+fun LogoutConfirmationDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "Cerrar Sesión",
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        },
+        text = {
+            Text(
+                text = "¿Estás seguro de que quieres cerrar sesión? Tendrás que volver a iniciar sesión para acceder a tu cuenta.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                )
+            ) {
+                Text(
+                    text = "Cerrar Sesión",
+                    color = MaterialTheme.colorScheme.onError,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss
+            ) {
+                Text(
+                    text = "Cancelar",
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopAppBar() {
+    Column {
+        CenterAlignedTopAppBar(
+            modifier = Modifier.height(48.dp),
+            title = {
+                Text(
+                    text = "Perfil",
+                    fontSize = 20.sp,
+                    lineHeight = 20.sp,
+                    color = Color.Black
+                )
+            },
+            windowInsets = WindowInsets(0, 0, 0, 0),
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                containerColor = Color.White
+            )
+        )
+
+        HorizontalDivider(
+            thickness = 1.dp,
+            color = LightGray
+        )
+    }
+}
+
+@Composable
+fun UserProfileSection(
+    userName: String,
+    userImg: String = "",
+    userMail: String = ""
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Profile image
         Image(
             painter = painterResource(id = android.R.drawable.ic_menu_gallery), // Replace with actual image resource
-            contentDescription = "Profile Picture",
+            contentDescription = "Profile Picture", //TODO añadir imagen back
             modifier = Modifier
                 .size(80.dp)
                 .clip(CircleShape),
             contentScale = ContentScale.Crop
         )
-
-        // User name
         Text(
-            text = "Susana Monzó",
+            text = userName,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(top = 8.dp)
         )
 
-        // User email
         Text(
-            text = "susmonzo19@gmail.com",
+            text = userMail,
             fontSize = 14.sp,
             color = Color.Gray,
             modifier = Modifier.padding(bottom = 16.dp)
@@ -103,57 +207,48 @@ fun UserProfileSection() {
 
 @Composable
 fun MenuOptions(
-    onLogOut: () -> Unit = {}
+    onLogOut: () -> Unit = {},
+    navigateToTermsAndConditions: () -> Unit = {},
+    navigateToPrivacyPolitics: () -> Unit = {},
+    navigateToFavorites: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        // Configuration option
         MenuOption(
-            icon = Icons.Default.Settings,
-            text = "Configuración",
+            drawableId = R.drawable.ic_discount,
+            text = "Mis descuentos",
             showChevron = true
         )
-
-        // Associations option
         MenuOption(
-            icon = Icons.Default.LocationOn,
-            text = "Asociaciones",
-            showChevron = true
+            drawableId = R.drawable.ic_heart,
+            text = "Favoritos",
+            showChevron = true,
+            onClick = { navigateToFavorites() }
         )
-
-        // My reviews option
         MenuOption(
-            icon = Icons.Default.Settings,
-            text = "Mis reseñas",
-            showChevron = true
+            drawableId = R.drawable.ic_terms_and_conditions,
+            text = "Términos y condiciones",
+            showChevron = true,
+            onClick = { navigateToTermsAndConditions() }
         )
-
-        // My created restaurants option
         MenuOption(
-            icon = Icons.Default.Add,
-            text = "Mis restaurantes creados",
-            showChevron = true
+            drawableId = R.drawable.ic_privacy_politic,
+            text = "Políticas de privacidad",
+            showChevron = true,
+            onClick = { navigateToPrivacyPolitics() }
         )
-
-        // Notifications option with switch
-        NotificationOption()
-
-        // Logout option
         MenuOption(
-            icon = Icons.AutoMirrored.Filled.ExitToApp,
+            drawableId = R.drawable.ic_log_out,
             text = "Cerrar sesión",
             showChevron = false,
-            onClick = {
-                FirebaseAuth.getInstance().signOut()
-                onLogOut()
-            }
+            onClick = onLogOut
         )
     }
 }
 
 @Composable
-fun MenuOption(icon: ImageVector, text: String, showChevron: Boolean, onClick: () -> Unit = {}) {
+fun MenuOption(drawableId: Int, text: String, showChevron: Boolean, onClick: () -> Unit = {}) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -161,11 +256,10 @@ fun MenuOption(icon: ImageVector, text: String, showChevron: Boolean, onClick: (
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            imageVector = icon,
+            painter = painterResource(id = drawableId),
             contentDescription = null,
             tint = Color.Gray
         )
-
         Text(
             text = text,
             modifier = Modifier
@@ -179,49 +273,11 @@ fun MenuOption(icon: ImageVector, text: String, showChevron: Boolean, onClick: (
 
         if (showChevron) {
             Icon(
-                imageVector = Icons.Default.AccountCircle,
+                painter = painterResource(R.drawable.ic_arrow_richt),
                 contentDescription = "Navigate",
                 tint = Color.Gray
             )
         }
-    }
-
-    Divider(
-        modifier = Modifier.padding(start = 56.dp),
-        color = Color.LightGray.copy(alpha = 0.5f)
-    )
-}
-
-@Composable
-fun NotificationOption() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = Icons.Default.Notifications,
-            contentDescription = null,
-            tint = Color.Gray
-        )
-
-        Text(
-            text = "Notificaciones",
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 16.dp),
-            fontSize = 16.sp
-        )
-
-        Switch(
-            checked = false,
-            onCheckedChange = { /* Handle toggle */ },
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = MaterialTheme.colorScheme.primary,
-                uncheckedThumbColor = Color.LightGray
-            )
-        )
     }
 
     HorizontalDivider(
@@ -241,11 +297,15 @@ fun AppVersionFooter() {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "LĀBERIT",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
+            Image(
+                painter = painterResource(id = R.drawable.img_logo_gastrovalencia),
+                contentDescription = "Profile Picture",
+                modifier = Modifier
+                    .size(150.dp)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
             )
+
             Text(
                 text = "v1.1",
                 fontSize = 14.sp,

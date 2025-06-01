@@ -7,7 +7,7 @@ data class Restaurant(
     val address: String,
     val rating: Double,
     val averagePrice: Double,
-    val restaurantImage: String,
+    val restaurantImages: List<String>,
     val menuImage: String,
     val description: String
 )
