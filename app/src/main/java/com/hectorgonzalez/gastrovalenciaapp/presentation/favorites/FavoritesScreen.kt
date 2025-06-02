@@ -65,7 +65,7 @@ fun FavoritesScreen() {
             time = "18:00",
             price = 25.0,
             description = "Festival con los mejores chefs de Valencia",
-            duration = "4 horas"
+            duration = "4 horas", eventImage = "", eventWeb = "" , isLike = false
         ),
         Event(
             id = 2,
@@ -76,7 +76,7 @@ fun FavoritesScreen() {
             time = "10:00",
             price = 45.0,
             description = "Aprende a hacer paella auténtica valenciana",
-            duration = "3 horas"
+            duration = "3 horas", eventImage = "", eventWeb = "" , isLike = false
         ),
         Event(
             id = 3,
@@ -87,13 +87,13 @@ fun FavoritesScreen() {
             time = "19:30",
             price = 0.0,
             description = "Degustación gratuita de vinos locales",
-            duration = "2 horas"
+            duration = "2 horas", eventImage = "", eventWeb = "" , isLike = false
         )
     )
 
     val restaurants = listOf(
         Restaurant(
-            id = 1L,
+            id = 1,
             name = "Casa Roberto",
             foodType = "Cocina Valenciana",
             address = "Calle de la Paz, 15",
@@ -101,10 +101,12 @@ fun FavoritesScreen() {
             averagePrice = 35.0,
             restaurantImages = listOf("https://example.com/casa-roberto.jpg"),
             menuImage = "https://example.com/menu-casa-roberto.jpg",
-            description = "Auténtica cocina valenciana desde 1920"
+            description = "Auténtica cocina valenciana desde 1920",
+            isLike = true,
+            restaurantWeb = ""
         ),
         Restaurant(
-            id = 2L,
+            id = 2,
             name = "El Jardín Secreto",
             foodType = "Mediterránea",
             address = "Plaza del Ayuntamiento, 8",
@@ -112,10 +114,12 @@ fun FavoritesScreen() {
             averagePrice = 55.0,
             restaurantImages = listOf("https://example.com/jardin-secreto.jpg"),
             menuImage = "https://example.com/menu-jardin.jpg",
-            description = "Cocina mediterránea con toques modernos"
+            description = "Cocina mediterránea con toques modernos",
+            isLike = true,
+            restaurantWeb = ""
         ),
         Restaurant(
-            id = 3L,
+            id = 3,
             name = "Tapas & Más",
             foodType = "Tapas",
             address = "Barrio del Carmen, 22",
@@ -123,7 +127,9 @@ fun FavoritesScreen() {
             averagePrice = 18.0,
             restaurantImages = emptyList(),
             menuImage = "",
-            description = "Las mejores tapas del centro histórico"
+            description = "Las mejores tapas del centro histórico",
+            isLike = true,
+            restaurantWeb = ""
         )
     )
 

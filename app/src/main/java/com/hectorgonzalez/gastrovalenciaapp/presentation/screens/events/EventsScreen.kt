@@ -24,7 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun EventsScreen(
-    navigateToEventDetail: (Int) -> Unit, // Cambiar para recibir ID
+    navigateToEventDetail: (Int) -> Unit,
     viewModel: EventViewModel = viewModel()
 ) {
     var searchText by remember { mutableStateOf("") }
@@ -60,11 +60,11 @@ fun EventsScreen(
                     val event = events[index]
                     EventCard(
                         event = event,
-                        imageUrl = "https://www.viaempresa.cat/uploads/s1/25/84/04/94/paelles-valencia.jpeg",
+                        imageUrl = event.eventImage ?: "",
                         isLiked = false,
                         onLikeClick = {},
                         onCardClick = {
-                            navigateToEventDetail(event.id) // Pasar el ID del evento
+                            navigateToEventDetail(event.id)
                         }
                     )
                 }

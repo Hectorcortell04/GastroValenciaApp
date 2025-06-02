@@ -24,7 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun RestaurantsScreen(
-    navigateToRestaurantDetail: () -> Unit,
+    navigateToRestaurantDetail: (Int) -> Unit,
     viewModel: RestaurantsViewModel = viewModel()
 
 ) {
@@ -60,7 +60,7 @@ fun RestaurantsScreen(
                     val restaurant = restaurants[index]
                     RestaurantCard(
                         restaurant = restaurant,
-                        onClick = { navigateToRestaurantDetail.invoke() }
+                        onClick = { navigateToRestaurantDetail.invoke(restaurant.id) }
                     )
                 }
             }

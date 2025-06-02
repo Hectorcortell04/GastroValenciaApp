@@ -26,7 +26,9 @@ sealed class AppScreens(val route: String) {
     data object EventDetail : AppScreens("event/{eventId}") {
         fun createRoute(eventId: Int) = "event/$eventId"
     }
-    data object RestaurantDetail : AppScreens("restaurant")
+    data object RestaurantDetail : AppScreens("restaurant/{restaurantId}") {
+        fun createRoute(restaurantId: Int) = "restaurant/$restaurantId"
+    }
     data object TermsAndConditions : AppScreens("termsAndConditions")
     data object PrivacyPolitics : AppScreens("privacyPolitics")
     data object Favorites : AppScreens("favorites")
@@ -66,15 +68,15 @@ fun AppNavHost(navController: NavHostController) {
         composable(AppScreens.Events.route) {
             EventsScreen(
                 navigateToEventDetail = { eventId ->
-                    navController.navigate(AppScreens.EventDetail.createRoute(eventId)) // ✅ Usa createRoute con el ID
+                    navController.navigate(AppScreens.EventDetail.createRoute(eventId))
                 }
             )
         }
 
         composable(AppScreens.Restaurants.route) {
             RestaurantsScreen(
-                navigateToRestaurantDetail = {
-                    navController.navigate(AppScreens.RestaurantDetail.route)
+                navigateToRestaurantDetail = { restaurantId ->
+                    navController.navigate(AppScreens.RestaurantDetail.createRoute(restaurantId))
                 }
             )
         }
@@ -95,7 +97,6 @@ fun AppNavHost(navController: NavHostController) {
                 navigateToFavorites = {
                     navController.navigate(AppScreens.Favorites.route)
                 },
-
             )
         }
 
@@ -110,8 +111,13 @@ fun AppNavHost(navController: NavHostController) {
             )
         }
 
-        composable(AppScreens.RestaurantDetail.route) {
+        composable(
+            route = AppScreens.RestaurantDetail.route,
+            arguments = listOf(navArgument("restaurantId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val restaurantId = backStackEntry.arguments?.getInt("restaurantId") ?: 0
             RestaurantDetailScreen(
+                restaurantId = restaurantId,
                 onBackClick = { navController.popBackStack() }
             )
         }
@@ -129,9 +135,7 @@ fun AppNavHost(navController: NavHostController) {
         }
 
         composable(AppScreens.Favorites.route) {
-            FavoritesScreen(
-            )
+            FavoritesScreen()
         }
     }
 }
-

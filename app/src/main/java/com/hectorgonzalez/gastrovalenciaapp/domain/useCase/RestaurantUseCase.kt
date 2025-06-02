@@ -7,4 +7,5 @@ import com.hectorgonzalez.gastrovalenciaapp.domain.entity.Restaurant
 
 class RestaurantUseCase(private val repository: RestaurantRepository = RestaurantRepository()) {
     suspend fun getRestaurants(): List<Restaurant> = repository.getRestaurants()
+    suspend fun getRestaurantById(id:String): Restaurant = repository.getRestaurantById(id)
 }

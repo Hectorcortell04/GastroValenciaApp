@@ -43,7 +43,7 @@ fun RestaurantCard(restaurant: Restaurant, onClick: () -> Unit) {
     ) {
         Column {
             AsyncImage(
-                model = restaurant.restaurantImages[0],
+                model = if (restaurant.restaurantImages.isNotEmpty()) restaurant.restaurantImages[0] else "",
                 contentDescription = "Imagen de ${restaurant.name}",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -129,7 +129,9 @@ fun RestaurantCardPreview() {
                 averagePrice = 25.50,
                 restaurantImages = listOf(),
                 menuImage = "",
-                description = "Restaurante con las mejores tapas y platos mediterráneos en el centro de Madrid."
+                description = "Restaurante con las mejores tapas y platos mediterráneos en el centro de Madrid.",
+                isLike = true,
+                restaurantWeb = ""
             ),
             onClick = {}
         )

@@ -17,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Card
@@ -61,7 +60,6 @@ fun EventCard(
         onClick = onCardClick
     ) {
         Column {
-            // Imagen con gradiente y categoría superpuesta
             Box(modifier = Modifier.height(200.dp)) {
                 AsyncImage(
                     model = imageUrl,
@@ -72,7 +70,6 @@ fun EventCard(
                     contentScale = ContentScale.Crop
                 )
 
-                // Gradiente oscuro en la parte superior para mejorar legibilidad
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -88,7 +85,6 @@ fun EventCard(
                         )
                 )
 
-                // Botón de favorito
                 IconButton(
                     onClick = onLikeClick,
                     modifier = Modifier
@@ -210,9 +206,9 @@ fun EventCard(
                         modifier = Modifier.weight(1f)
                     ) {
                         Icon(
-                            imageVector = Icons.Default.ShoppingCart,
+                            painter = painterResource(R.drawable.ic_calendar),
                             contentDescription = "Fecha",
-                            tint = MaterialTheme.colorScheme.secondary,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))

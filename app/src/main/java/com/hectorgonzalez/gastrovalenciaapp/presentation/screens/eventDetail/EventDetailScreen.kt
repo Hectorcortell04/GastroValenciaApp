@@ -1,7 +1,10 @@
 package com.hectorgonzalez.gastrovalenciaapp.presentation.screens.eventDetail
 
 import EventDetailViewModel
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -63,6 +66,23 @@ fun EventDetailScreen(
 ) {
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
+
+    // Función para abrir web
+    fun openWebUrl(url: String?) {
+        val finalUrl = if (url.isNullOrBlank()) {
+            "https://beluarestaurante.es/"
+        } else {
+            url
+        }
+
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(finalUrl))
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            // Si no se puede abrir, mostrar error en snackbar
+            // viewModel.showError("No se pudo abrir el navegador")
+        }
+    }
 
     // Cargar el evento específico usando el ID
     LaunchedEffect(eventId) {
@@ -174,11 +194,11 @@ fun EventDetailScreen(
                             .height(200.dp)
                     ) {
                         AsyncImage(
-                            model =  "", // Usar el campo correcto
+                            model = event.eventImage ?: "", // Usar eventImage del evento
                             contentDescription = event.name,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxSize(),
-                            error = painterResource(R.drawable.img_logo_gastrovalencia), // Imagen por defecto
+                            error = painterResource(R.drawable.img_logo_gastrovalencia),
                             placeholder = painterResource(R.drawable.img_logo_gastrovalencia)
                         )
 
@@ -230,7 +250,7 @@ fun EventDetailScreen(
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Column {
                                     Text(
-                                        text = event.date,
+                                        text = "${event.date} - ${event.time}",
                                         style = MaterialTheme.typography.bodyLarge,
                                         fontWeight = FontWeight.SemiBold
                                     )
@@ -328,11 +348,15 @@ fun EventDetailScreen(
                         }
                     }
 
+                    // CARD CLICKEABLE PARA ABRIR WEB
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(180.dp)
-                            .padding(16.dp),
+                            .padding(16.dp)
+                            .clickable {
+                                openWebUrl(event.eventWeb) // ← AQUÍ SE ABRE LA WEB
+                            },
                         shape = RoundedCornerShape(16.dp),
                         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                     ) {
@@ -353,6 +377,12 @@ fun EventDetailScreen(
                                 Text(
                                     text = "Ir a la web para reservar",
                                     style = MaterialTheme.typography.labelLarge
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Toca para abrir",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         }

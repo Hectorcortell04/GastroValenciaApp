@@ -10,4 +10,7 @@ data class Event(
     val price: Double,
     val description: String,
     val duration: String,
+    val eventImage: String?,
+    val isLike: Boolean?,
+    val eventWeb: String?
 )

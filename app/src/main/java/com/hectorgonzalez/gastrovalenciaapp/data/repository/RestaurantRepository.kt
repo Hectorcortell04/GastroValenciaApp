@@ -10,6 +10,10 @@ class RestaurantRepository(
     suspend fun getRestaurants(): List<Restaurant> {
         return remoteDataSource.getRestaurants().map { it.toDomain() }
     }
+    suspend fun getRestaurantById(id : String): Restaurant{
+        return remoteDataSource.getRestaurantById(id).toDomain()
+    }
+
 }
 
 fun RestaurantDto.toDomain(): Restaurant {
@@ -21,7 +25,9 @@ fun RestaurantDto.toDomain(): Restaurant {
         rating = this.rating,
         averagePrice = this.averagePrice,
         restaurantImages = this.restaurantImages,
-        menuImage = this.menuImage,
-        description = this.description
+        menuImage = this.menuImage ?: "",
+        description = this.description,
+        isLike = this.isLike,
+        restaurantWeb = this.restaurantWeb
     )
 }

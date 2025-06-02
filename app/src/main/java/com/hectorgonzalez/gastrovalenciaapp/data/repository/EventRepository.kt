@@ -35,6 +35,9 @@ private fun EventDto.toDomain(): Event {
         time = this.time ?: "19.00",
         price = this.price,
         description = this.description,
-        duration = this.duration
+        duration = this.duration,
+        isLike = this.isLike,
+        eventImage = this.eventImage,
+        eventWeb = this.eventWeb
     )
 }

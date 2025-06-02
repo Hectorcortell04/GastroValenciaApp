@@ -21,7 +21,7 @@ class LoginViewModel: ViewModel() {
         loadUsers()
     }
 
-     fun loadUsers() {
+     private fun loadUsers() {
         viewModelScope.launch {
             try {
                 val list = usersUseCase.getUsers()

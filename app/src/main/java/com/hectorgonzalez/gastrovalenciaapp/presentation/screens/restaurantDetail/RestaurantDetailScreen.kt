@@ -30,6 +30,7 @@ import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,10 +43,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,69 +55,49 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.hectorgonzalez.gastrovalenciaapp.R
-import com.hectorgonzalez.gastrovalenciaapp.data.datasource.restaurant.dto.RestaurantDto
-import kotlinx.coroutines.launch
+import com.hectorgonzalez.gastrovalenciaapp.domain.entity.Restaurant
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun RestaurantDetailScreen(
-    onBackClick: () -> Unit = {},
+    restaurantId: Int,
+    onBackClick: () -> Unit,
+    viewModel: RestaurantDetailViewModel = viewModel()
 ) {
-    var isLiked by remember { mutableStateOf(true) }
-    var showFullMenu by remember { mutableStateOf(false) }
+    val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
 
-    val restaurant = RestaurantDto(
-        id = 2,
-        name = "Panorama",
-        foodType = "Mediterránea fusión",
-        address = "Paseo de la Alameda, 34, 46023 València",
-        rating = 4.8,
-        averagePrice = 45.0,
-        restaurantImages = listOf(
-            "https://content.arquitecturaydiseno.es/medio/2023/11/23/3-la-sastreria_cee9b985_231123155623_1900x1266.jpg",
-            "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80",
-            "https://images.unsplash.com/photo-1565958011703-44f9829ba187?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80",
-            "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80"
-        ),
-        menuImage = "https://cdn.venngage.com/template/thumbnail/small/1855f361-f29f-4e57-a6e9-e55a3490bec6.webp",
-        description = "Elegante restaurante con vistas al río Turia que combina la cocina mediterránea tradicional con técnicas modernas y toques de fusión internacional"
-    )
+    // Cargar el restaurante específico usando el ID
+    LaunchedEffect(restaurantId) {
+        viewModel.loadRestaurant(restaurantId, context)
+    }
+
+    // Mostrar mensaje de error si existe
+    LaunchedEffect(viewModel.errorMessage) {
+        viewModel.errorMessage?.let { error ->
+            snackbarHostState.showSnackbar(error)
+            viewModel.clearError()
+        }
+    }
+
+    val restaurant = viewModel.restaurant
+    val isLoading = viewModel.isLoading
+    val error = viewModel.errorMessage
+    val isLiked = viewModel.isLiked
+    val isLikingInProgress = viewModel.isLikingInProgress
+
+    var showFullMenu by remember { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-
-    // Mocked functions
-    val onToggleFavorite = {
-        isLiked = !isLiked
-        coroutineScope.launch {
-            snackbarHostState.showSnackbar(
-                message = if (isLiked) "Añadido a favoritos ❤️" else "Eliminado de favoritos"
-            )
-        }
-    }
-
-    val onViewMenuClick = {
-        showFullMenu = true
-    }
-
-    val onReserveClick = {
-        coroutineScope.launch {
-            snackbarHostState.showSnackbar("Redirigiendo a reservas... 🍽️")
-        }
-    }
-
-    val onFoodTypeClick = {
-        coroutineScope.launch {
-            snackbarHostState.showSnackbar("Buscando restaurantes de ${restaurant.foodType}...")
-        }
-    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -125,7 +106,7 @@ fun RestaurantDetailScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = restaurant.name,
+                        text = restaurant?.name ?: "Detalles del Restaurante",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -139,12 +120,26 @@ fun RestaurantDetailScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { onToggleFavorite.invoke() }) {
-                        Icon(
-                            imageVector = if (isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                            contentDescription = if (isLiked) "Quitar de favoritos" else "Añadir a favoritos",
-                            tint = if (isLiked) Color.Red else MaterialTheme.colorScheme.onSurface
-                        )
+                    IconButton(
+                        onClick = {
+                            if (!isLikingInProgress) {
+                                viewModel.toggleLike(context)
+                            }
+                        },
+                        enabled = !isLikingInProgress && restaurant != null
+                    ) {
+                        if (isLikingInProgress) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            Icon(
+                                imageVector = if (isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                contentDescription = if (isLiked) "Quitar de favoritos" else "Añadir a favoritos",
+                                tint = if (isLiked) Color.Red else MaterialTheme.colorScheme.onSurface
+                            )
+                        }
                     }
                 },
                 scrollBehavior = scrollBehavior,
@@ -154,46 +149,86 @@ fun RestaurantDetailScreen(
             )
         }
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(paddingValues),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // Carrusel de imágenes del restaurante
-            RestaurantImageCarousel(
-                images = restaurant.restaurantImages,
-                rating = restaurant.rating,
-                foodType = restaurant.foodType,
-                onFoodTypeClick = { onFoodTypeClick.invoke() }
-            )
+        when {
+            isLoading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+            error != null -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "Error al cargar el restaurante",
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = error,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(onClick = { viewModel.retryLoadRestaurant(context) }) {
+                            Text("Reintentar")
+                        }
+                    }
+                }
+            }
+            restaurant != null -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(paddingValues),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    // Carrusel de imágenes del restaurante
+                    RestaurantImageCarousel(
+                        images = restaurant.restaurantImages,
+                        rating = restaurant.rating,
+                        foodType = restaurant.foodType,
+                        onFoodTypeClick = { }
+                    )
 
-            // Información principal
-            RestaurantInfoSection(
-                restaurant = restaurant,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
+                    // Información principal
+                    RestaurantInfoSection(
+                        restaurant = restaurant,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
 
-            // Imagen del menú
-            MenuSection(
-                menuImageUrl = restaurant.menuImage,
-                onViewMenuClick = { onViewMenuClick.invoke() },
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
+                    // Imagen del menú
+                    MenuSection(
+                        menuImageUrl = restaurant.menuImage ?: "",
+                        onViewMenuClick = { showFullMenu = true },
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
 
-            // Botones de acción
-            ActionButtons(
-                onReserveClick = { onReserveClick.invoke() },
-                modifier = Modifier.padding(16.dp)
-            )
+                    // Botones de acción
+                    ActionButtons(
+                        onReserveClick = { viewModel.onReserveClick() },
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
         }
     }
 
     // Diálogo para mostrar el menú completo
-    if (showFullMenu) {
+    if (showFullMenu && restaurant != null) {
         FullMenuDialog(
-            menuImageUrl = restaurant.menuImage,
+            menuImageUrl = restaurant.menuImage ?: "",
             onDismiss = { showFullMenu = false }
         )
     }
@@ -387,7 +422,7 @@ private fun RestaurantImageCarousel(
 
 @Composable
 private fun RestaurantInfoSection(
-    restaurant: RestaurantDto,
+    restaurant: Restaurant,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -594,5 +629,16 @@ private fun ActionButtons(
                 fontWeight = FontWeight.Medium
             )
         }
+    }
+}
+
+@Preview
+@Composable
+fun RestaurantDetailPreview() {
+    MaterialTheme {
+        RestaurantDetailScreen(
+            restaurantId = 1,
+            onBackClick = {}
+        )
     }
 }

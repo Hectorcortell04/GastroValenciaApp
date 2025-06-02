@@ -1,6 +1,5 @@
 package com.hectorgonzalez.gastrovalenciaapp.data.datasource.user.retrofitClient
 
-import com.hectorgonzalez.gastrovalenciaapp.data.datasource.event.api.EventApi
 import com.hectorgonzalez.gastrovalenciaapp.data.datasource.user.api.UserApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -8,7 +7,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    private const val BASE_URL = "http://192.168.1.207:8080"
+    private const val BASE_URL = "http://10.0.2.2:8080/"
 
     private val client = OkHttpClient.Builder()
         .addInterceptor(HttpLoggingInterceptor().apply {
