@@ -62,6 +62,7 @@ import com.hectorgonzalez.gastrovalenciaapp.R
 fun EventDetailScreen(
     eventId: Int,
     onBackClick: () -> Unit,
+    navigateToMyDiscounts: (Int) -> Unit,
     viewModel: EventDetailViewModel = viewModel()
 ) {
     val context = LocalContext.current
@@ -154,6 +155,7 @@ fun EventDetailScreen(
                     CircularProgressIndicator()
                 }
             }
+
             error != null -> {
                 Box(
                     modifier = Modifier
@@ -180,6 +182,7 @@ fun EventDetailScreen(
                     }
                 }
             }
+
             event != null -> {
                 Column(
                     modifier = Modifier
@@ -403,14 +406,14 @@ fun EventDetailScreen(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "¡Consigue descuentos increíbles!",
+                                text = "¡Felicidades, tienes descuentos disponibles!",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.padding(bottom = 8.dp)
                             )
 
                             Button(
-                                onClick = { viewModel.onReserveClick() },
+                                onClick = { navigateToMyDiscounts(18) },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(vertical = 8.dp),
@@ -424,9 +427,9 @@ fun EventDetailScreen(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = "${event.price}€", // TODO: añadir aquí los descuentos en vez del precio
+                                    text = "Acceder a mis descuentos",
                                     style = MaterialTheme.typography.bodyLarge,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.Bold,
                                 )
                             }
                         }
@@ -434,16 +437,5 @@ fun EventDetailScreen(
                 }
             }
         }
-    }
-}
-
-@Preview
-@Composable
-fun EventDetailPreview() {
-    MaterialTheme {
-        EventDetailScreen(
-            eventId = 1,
-            onBackClick = {}
-        )
     }
 }

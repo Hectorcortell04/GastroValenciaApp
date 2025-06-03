@@ -122,15 +122,6 @@ class EventDetailViewModel(
     fun clearError() {
         errorMessage = null
     }
-
-    /**
-     * Maneja la acción de reservar (placeholder para futura implementación)
-     */
-    fun onReserveClick() {
-        // TODO: Implementar lógica de reserva
-        // Ejemplo: navegar a web externa, abrir formulario de reserva, etc.
-    }
-
     /**
      * Maneja la acción de compartir evento
      */

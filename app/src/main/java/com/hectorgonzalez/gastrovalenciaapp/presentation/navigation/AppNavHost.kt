@@ -114,7 +114,10 @@ fun AppNavHost(navController: NavHostController) {
             val eventId = backStackEntry.arguments?.getInt("eventId") ?: 0
             EventDetailScreen(
                 eventId = eventId,
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                navigateToMyDiscounts = { userId ->
+                    navController.navigate(AppScreens.MyDiscounts.createRoute(userId))
+                }
             )
         }
 
