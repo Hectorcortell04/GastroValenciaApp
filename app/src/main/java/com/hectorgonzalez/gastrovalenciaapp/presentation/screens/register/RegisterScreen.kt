@@ -1,5 +1,6 @@
 package com.hectorgonzalez.gastrovalenciaapp.presentation.screens.register
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -34,12 +36,14 @@ import com.hectorgonzalez.gastrovalenciaapp.R
 fun RegisterScreen(
     onNavigateBack: () -> Unit = {},
     onNavigateToLogin: () -> Unit = {},
-    viewModel: RegisterViewModel = viewModel()
+    viewModel: RegisterViewModel = RegisterViewModel()
 ) {
+    val context = LocalContext.current
     var fullName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    var imageUrl by remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
     var showConfirmPassword by remember { mutableStateOf(false) }
 
@@ -48,6 +52,20 @@ fun RegisterScreen(
     var emailError by remember { mutableStateOf("") }
     var passwordError by remember { mutableStateOf("") }
     var confirmPasswordError by remember { mutableStateOf("") }
+    var imageUrlError by remember { mutableStateOf("") }
+
+    // Función para validar URL
+    fun isValidUrl(url: String): Boolean {
+        return if (url.isBlank()) true // URL opcional
+        else {
+            try {
+                val urlPattern = Regex("^(https?://)([\\w.-]+)(:[0-9]+)?(/.*)?$")
+                urlPattern.matches(url)
+            } catch (e: Exception) {
+                false
+            }
+        }
+    }
 
     // Check if all fields are valid
     val isFormValid = fullName.isNotBlank() &&
@@ -58,6 +76,7 @@ fun RegisterScreen(
             passwordError.isEmpty() &&
             confirmPassword.isNotBlank() &&
             confirmPasswordError.isEmpty() &&
+            imageUrlError.isEmpty() &&
             PatternsCompat.EMAIL_ADDRESS.matcher(email).matches() &&
             password.length >= 6 &&
             confirmPassword == password
@@ -191,6 +210,44 @@ fun RegisterScreen(
             )
         )
 
+        // Image URL Field
+        OutlinedTextField(
+            value = imageUrl,
+            onValueChange = {
+                imageUrl = it
+                imageUrlError = when {
+                    it.isNotBlank() && !isValidUrl(it) -> "URL de imagen inválida"
+                    else -> ""
+                }
+            },
+            label = { Text("URL de Imagen (Opcional)") },
+            placeholder = { Text("https://ejemplo.com/imagen.jpg") },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.AccountBox,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+            isError = imageUrlError.isNotEmpty(),
+            supportingText = if (imageUrlError.isNotEmpty()) {
+                { Text(imageUrlError, color = MaterialTheme.colorScheme.error) }
+            } else {
+                {
+                    Text("Si no se proporciona, se usará una imagen por defecto",
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)) }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+            )
+        )
+
         // Password Field
         OutlinedTextField(
             value = password,
@@ -287,9 +344,14 @@ fun RegisterScreen(
                         name = fullName,
                         email = email,
                         password = password,
+                        imageUrl = imageUrl.ifBlank { "" }, // Si está vacío, se usará la imagen por defecto en el ViewModel
                         onSuccess = {
-                            // Opcional: realizar alguna acción adicional al éxito
-                            print("user registrado exito")
+                            // Mostrar toast de éxito
+                            Toast.makeText(
+                                context,
+                                "Usuario creado con éxito",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     )
                 }
