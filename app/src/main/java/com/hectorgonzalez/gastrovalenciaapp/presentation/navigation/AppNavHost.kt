@@ -1,5 +1,6 @@
 package com.hectorgonzalez.gastrovalenciaapp.navigation
 
+import MyDiscountsScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -32,6 +33,9 @@ sealed class AppScreens(val route: String) {
     data object TermsAndConditions : AppScreens("termsAndConditions")
     data object PrivacyPolitics : AppScreens("privacyPolitics")
     data object Favorites : AppScreens("favorites")
+    data object MyDiscounts : AppScreens("myDiscounts/{userId}") {
+        fun createRoute(userId: Int) = "myDiscounts/$userId"
+    }
 }
 
 @Composable
@@ -97,6 +101,9 @@ fun AppNavHost(navController: NavHostController) {
                 navigateToFavorites = {
                     navController.navigate(AppScreens.Favorites.route)
                 },
+                navigateToMyDiscounts = { userId ->
+                    navController.navigate(AppScreens.MyDiscounts.createRoute(userId))
+                }
             )
         }
 
@@ -136,6 +143,17 @@ fun AppNavHost(navController: NavHostController) {
 
         composable(AppScreens.Favorites.route) {
             FavoritesScreen()
+        }
+
+        composable(
+            route = AppScreens.MyDiscounts.route,
+            arguments = listOf(navArgument("userId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getInt("userId") ?: 0
+            MyDiscountsScreen(
+                onBackClick = { navController.popBackStack() },
+                userId = userId.toString()
+            )
         }
     }
 }

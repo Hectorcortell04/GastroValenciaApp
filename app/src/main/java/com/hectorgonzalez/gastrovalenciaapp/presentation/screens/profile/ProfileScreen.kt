@@ -42,7 +42,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -56,6 +55,7 @@ fun ProfileScreen(
     navigateToTermsAndConditions: () -> Unit = {},
     navigateToPrivacyPolitics: () -> Unit = {},
     navigateToFavorites: () -> Unit = {},
+    navigateToMyDiscounts: (Int) -> Unit,
     viewModel: ProfileViewModel = viewModel()
 ) {
     val context = LocalContext.current
@@ -93,7 +93,9 @@ fun ProfileScreen(
                 onLogOut = { showLogoutDialog = true },
                 navigateToTermsAndConditions = navigateToTermsAndConditions,
                 navigateToPrivacyPolitics = navigateToPrivacyPolitics,
-                navigateToFavorites = navigateToFavorites
+                navigateToFavorites = navigateToFavorites,
+                navigateToMyDiscounts = navigateToMyDiscounts,
+                userId = user?.id ?: 0 //Si el id llegase nulo se le pasa 0 ya que no existe y no cargaría los descuentos.
             )
             Spacer(modifier = Modifier.weight(1f))
             AppVersionFooter()
@@ -245,10 +247,12 @@ fun UserProfileSection(
 
 @Composable
 fun MenuOptions(
+    userId : Int,
     onLogOut: () -> Unit = {},
     navigateToTermsAndConditions: () -> Unit = {},
     navigateToPrivacyPolitics: () -> Unit = {},
-    navigateToFavorites: () -> Unit
+    navigateToFavorites: () -> Unit,
+    navigateToMyDiscounts: (Int) -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -256,7 +260,8 @@ fun MenuOptions(
         MenuOption(
             drawableId = R.drawable.ic_discount,
             text = "Mis descuentos",
-            showChevron = true
+            showChevron = true,
+            onClick = { navigateToMyDiscounts(userId) }
         )
         MenuOption(
             drawableId = R.drawable.ic_heart,
