@@ -1,5 +1,7 @@
 package com.hectorgonzalez.gastrovalenciaapp.presentation.screens.restaurantDetail
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -97,18 +99,17 @@ fun RestaurantDetailScreen(
     val isLikingInProgress = viewModel.isLikingInProgress
 
     var showFullMenu by remember { mutableStateOf(false) }
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
                     Text(
                         text = restaurant?.name ?: "Detalles del Restaurante",
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1
                     )
                 },
                 navigationIcon = {
@@ -142,8 +143,7 @@ fun RestaurantDetailScreen(
                         }
                     }
                 },
-                scrollBehavior = scrollBehavior,
-                colors = TopAppBarDefaults.largeTopAppBarColors(
+                colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface
                 )
             )
@@ -217,7 +217,14 @@ fun RestaurantDetailScreen(
 
                     // Botones de acción
                     ActionButtons(
-                        onReserveClick = { viewModel.onReserveClick() },
+                        onReserveClick = {
+                            // Abrir la web del restaurante
+                            restaurant.restaurantWeb?.let { url ->
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                context.startActivity(intent)
+                            }
+                        },
+                        hasWebsite = !restaurant.restaurantWeb.isNullOrEmpty(),
                         modifier = Modifier.padding(16.dp)
                     )
                 }
@@ -567,7 +574,9 @@ private fun MenuSection(
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 AsyncImage(
-                    model = menuImageUrl,
+                    model = menuImageUrl.ifEmpty {
+                        "https://res.cloudinary.com/dpgda2bnc/image/upload/v1748802467/Menu_Arroceria_Maribel_l8yets.jpg"
+                    },
                     contentDescription = "Imagen del menú",
                     modifier = Modifier
                         .fillMaxSize()
@@ -575,7 +584,6 @@ private fun MenuSection(
                     contentScale = ContentScale.Crop
                 )
 
-                // Overlay para mejorar legibilidad
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -612,6 +620,7 @@ private fun MenuSection(
 @Composable
 private fun ActionButtons(
     onReserveClick: () -> Unit,
+    hasWebsite: Boolean,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -621,10 +630,17 @@ private fun ActionButtons(
         Button(
             onClick = onReserveClick,
             modifier = Modifier.weight(1f),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
+            enabled = hasWebsite
         ) {
+            Icon(
+                painter  = painterResource(R.drawable.ic_calendar),
+                contentDescription = "Sitio web",
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Reservar mesa",
+                text = if (hasWebsite) "Reservar mesa" else "Web no disponible",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Medium
             )

@@ -10,5 +10,6 @@ data class UserDto(
     val name: String,
     val email: String,
     val firebaseUid: String,
-    val registrationDate: String
+    val registrationDate: String,
+    val userImage : String
 )

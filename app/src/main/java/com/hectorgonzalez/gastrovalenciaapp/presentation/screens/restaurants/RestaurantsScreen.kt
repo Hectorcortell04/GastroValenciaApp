@@ -40,7 +40,10 @@ fun RestaurantsScreen(
     ) {
         OutlinedTextField(
             value = searchText,
-            onValueChange = { searchText = it },
+            onValueChange ={
+                searchText = it
+                viewModel.searchRestaurantsByName(it)
+            },
             placeholder = { Text("Buscar") },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Buscar") },
             modifier = Modifier.fillMaxWidth()

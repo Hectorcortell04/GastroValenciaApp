@@ -13,6 +13,9 @@ class RestaurantRepository(
     suspend fun getRestaurantById(id : String): Restaurant{
         return remoteDataSource.getRestaurantById(id).toDomain()
     }
+    suspend fun getRestaurantsByName(name :String): List<Restaurant> {
+        return remoteDataSource.getRestaurantsByName(name).map { it.toDomain() }
+    }
 
 }
 

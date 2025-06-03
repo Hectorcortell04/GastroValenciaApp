@@ -13,4 +13,7 @@ class RestaurantDataSource {
     suspend fun getRestaurantById(id : String): RestaurantDto{
         return restaurantApi.getRestaurantById(id)
     }
+    suspend fun getRestaurantsByName(name : String): List<RestaurantDto>{
+        return restaurantApi.getRestaurantsByName(name)
+    }
 }

@@ -86,7 +86,7 @@ fun ProfileScreen(
             TopAppBar()
             UserProfileSection(
                 userName = user?.name ?: "...",
-                userImg = "", //TODO add userimage
+                userImg =user?.userImage ,
                 userMail = user?.email ?: "..."
             )
             MenuOptions(
@@ -177,10 +177,9 @@ fun TopAppBar() {
                     text = "Perfil",
                     fontSize = 20.sp,
                     lineHeight = 20.sp,
-                    color = Color.Black
+                    color = Color.Black,
                 )
             },
-            windowInsets = WindowInsets(0, 0, 0, 0),
             colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                 containerColor = Color.White
             )
@@ -188,7 +187,8 @@ fun TopAppBar() {
 
         HorizontalDivider(
             thickness = 1.dp,
-            color = LightGray
+            color = LightGray,
+            modifier = Modifier.padding(top=16.dp)
         )
     }
 }
@@ -205,7 +205,7 @@ fun UserProfileSection(
             .padding(top = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (userImg != null && userImg.isNotEmpty()) {
+        if (!userImg.isNullOrEmpty()) {
             AsyncImage(
                 model = userImg,
                 contentDescription = "Profile Picture",

@@ -7,5 +7,6 @@ data class User(
     val name: String,
     val email: String,
     val firebaseUid: String,
-    val registrationDate: LocalDateTime
+    val registrationDate: LocalDateTime,
+    val userImage: String
 )
