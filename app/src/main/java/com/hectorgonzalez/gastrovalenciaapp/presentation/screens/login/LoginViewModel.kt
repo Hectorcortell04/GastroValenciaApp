@@ -5,11 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hectorgonzalez.gastrovalenciaapp.domain.entity.User
-import com.hectorgonzalez.gastrovalenciaapp.domain.useCase.UsersUseCase
+import com.hectorgonzalez.gastrovalenciaapp.domain.useCase.UserUseCase
 import kotlinx.coroutines.launch
 
 class LoginViewModel: ViewModel() {
-    private val usersUseCase = UsersUseCase()
+    private val usersUseCase = UserUseCase()
 
     private val _users = MutableLiveData<List<User>>()
     val users: LiveData<List<User>> = _users

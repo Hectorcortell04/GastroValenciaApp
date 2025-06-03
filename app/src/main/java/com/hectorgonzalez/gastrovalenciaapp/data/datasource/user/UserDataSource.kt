@@ -1,15 +1,19 @@
 package com.hectorgonzalez.gastrovalenciaapp.data.datasource.user
 
 import com.hectorgonzalez.gastrovalenciaapp.data.datasource.user.api.UserApi
+import com.hectorgonzalez.gastrovalenciaapp.data.datasource.user.dto.RegisterUserDto
 import com.hectorgonzalez.gastrovalenciaapp.data.datasource.user.dto.UserDto
-import com.hectorgonzalez.gastrovalenciaapp.data.datasource.user.retrofitClient.RetrofitClient
+import com.hectorgonzalez.gastrovalenciaapp.data.networkClient.NetworkClient
 
-class UserDataSource(
-    private val api: UserApi = RetrofitClient.api
-) {
+class UserDataSource {
+    private val userApi = NetworkClient.instance.create(UserApi::class.java)
+
     suspend fun fetchUsers(): List<UserDto> =
-        api.getUsers()
+        userApi.getUsers()
 
-    suspend fun getUserId(uid:String) : UserDto =
-        api.getUserId(uid)
+    suspend fun getUserId(uid: String): UserDto =
+        userApi.getUserId(uid)
+
+    suspend fun registerUser(registerUserData : RegisterUserDto) : UserDto =
+        userApi.registerUser(registerUserData)
 }

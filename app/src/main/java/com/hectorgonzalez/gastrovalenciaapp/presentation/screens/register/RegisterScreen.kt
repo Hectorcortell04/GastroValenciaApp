@@ -1,2 +1,362 @@
 package com.hectorgonzalez.gastrovalenciaapp.presentation.screens.register
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
+import androidx.core.util.PatternsCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.hectorgonzalez.gastrovalenciaapp.R
+
+@Composable
+fun RegisterScreen(
+    onNavigateBack: () -> Unit = {},
+    onNavigateToLogin: () -> Unit = {},
+    viewModel: RegisterViewModel = viewModel()
+) {
+    var fullName by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+    var showPassword by remember { mutableStateOf(false) }
+    var showConfirmPassword by remember { mutableStateOf(false) }
+
+    // Validation states
+    var nameError by remember { mutableStateOf("") }
+    var emailError by remember { mutableStateOf("") }
+    var passwordError by remember { mutableStateOf("") }
+    var confirmPasswordError by remember { mutableStateOf("") }
+
+    // Check if all fields are valid
+    val isFormValid = fullName.isNotBlank() &&
+            nameError.isEmpty() &&
+            email.isNotBlank() &&
+            emailError.isEmpty() &&
+            password.isNotBlank() &&
+            passwordError.isEmpty() &&
+            confirmPassword.isNotBlank() &&
+            confirmPasswordError.isEmpty() &&
+            PatternsCompat.EMAIL_ADDRESS.matcher(email).matches() &&
+            password.length >= 6 &&
+            confirmPassword == password
+
+    // Observar el estado de éxito del registro
+    LaunchedEffect(viewModel.isRegistrationSuccessful) {
+        if (viewModel.isRegistrationSuccessful) {
+            // Navegar a login o pantalla principal después del registro exitoso
+            onNavigateToLogin()
+            viewModel.resetRegistrationState()
+        }
+    }
+
+    // Mostrar error si existe
+    viewModel.errorMessage?.let { error ->
+        LaunchedEffect(error) {
+            // Aquí podrías mostrar un Snackbar o Toast
+            // Por ahora simplemente limpiamos el error después de 3 segundos
+            kotlinx.coroutines.delay(3000)
+            viewModel.clearError()
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(24.dp)
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        // Header with back button
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 32.dp),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            IconButton(
+                onClick = onNavigateBack,
+                modifier = Modifier.size(48.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Volver atrás",
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            }
+        }
+
+        // Title and subtitle
+        Text(
+            text = "Crear Cuenta",
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.onBackground,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        Text(
+            text = "Únete a gastroValencia y disfruta de nuestra cultura",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(bottom = 40.dp)
+        )
+
+        // Full Name Field
+        OutlinedTextField(
+            value = fullName,
+            onValueChange = {
+                fullName = it
+                nameError = if (it.isBlank()) "El nombre completo es obligatorio" else ""
+            },
+            label = { Text("Nombre Completo") },
+            placeholder = { Text("Introduce tu nombre completo") },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            },
+            isError = nameError.isNotEmpty(),
+            supportingText = if (nameError.isNotEmpty()) {
+                { Text(nameError, color = MaterialTheme.colorScheme.error) }
+            } else null,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+            )
+        )
+
+        // Email Field
+        OutlinedTextField(
+            value = email,
+            onValueChange = {
+                email = it
+                emailError = when {
+                    it.isBlank() -> "El email es obligatorio"
+                    !PatternsCompat.EMAIL_ADDRESS.matcher(it).matches() -> "Formato de email inválido"
+                    else -> ""
+                }
+            },
+            label = { Text("Email") },
+            placeholder = { Text("ejemplo@email.com") },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Email,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            isError = emailError.isNotEmpty(),
+            supportingText = if (emailError.isNotEmpty()) {
+                { Text(emailError, color = MaterialTheme.colorScheme.error) }
+            } else null,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+            )
+        )
+
+        // Password Field
+        OutlinedTextField(
+            value = password,
+            onValueChange = {
+                password = it
+                passwordError = when {
+                    it.isBlank() -> "La contraseña es obligatoria"
+                    it.length < 6 -> "Mínimo 6 caracteres"
+                    else -> ""
+                }
+            },
+            label = { Text("Contraseña") },
+            placeholder = { Text("Mínimo 6 caracteres") },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            },
+            trailingIcon = {
+                IconButton(onClick = { showPassword = !showPassword }) {
+                    Icon(
+                        painter = if (showPassword) painterResource(R.drawable.ic_eye_open) else painterResource(R.drawable.ic_eye_closed),
+                        contentDescription = if (showPassword) "Ocultar contraseña" else "Mostrar contraseña"
+                    )
+                }
+            },
+            visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            isError = passwordError.isNotEmpty(),
+            supportingText = if (passwordError.isNotEmpty()) {
+                { Text(passwordError, color = MaterialTheme.colorScheme.error) }
+            } else null,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+            )
+        )
+
+        // Confirm Password Field
+        OutlinedTextField(
+            value = confirmPassword,
+            onValueChange = {
+                confirmPassword = it
+                confirmPasswordError = when {
+                    it.isBlank() -> "Por favor confirma tu contraseña"
+                    it != password -> "Las contraseñas no coinciden"
+                    else -> ""
+                }
+            },
+            label = { Text("Confirmar Contraseña") },
+            placeholder = { Text("Confirma tu contraseña") },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            },
+            trailingIcon = {
+                IconButton(onClick = { showConfirmPassword = !showConfirmPassword }) {
+                    Icon(
+                        painter = if (showConfirmPassword) painterResource(R.drawable.ic_eye_open) else painterResource(R.drawable.ic_eye_closed),
+                        contentDescription = if (showConfirmPassword) "Ocultar contraseña" else "Mostrar contraseña"
+                    )
+                }
+            },
+            visualTransformation = if (showConfirmPassword) VisualTransformation.None else PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            isError = confirmPasswordError.isNotEmpty(),
+            supportingText = if (confirmPasswordError.isNotEmpty()) {
+                { Text(confirmPasswordError, color = MaterialTheme.colorScheme.error) }
+            } else null,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 24.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+            )
+        )
+
+        // Sign Up Button
+        Button(
+            onClick = {
+                if (isFormValid) {
+                    viewModel.registerUser(
+                        name = fullName,
+                        email = email,
+                        password = password,
+                        onSuccess = {
+                            // Opcional: realizar alguna acción adicional al éxito
+                            print("user registrado exito")
+                        }
+                    )
+                }
+            },
+            enabled = isFormValid && !viewModel.isLoading,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+            )
+        ) {
+            if (viewModel.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text(
+                    text = "Crear Cuenta",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
+
+        // Mostrar mensaje de error si existe
+        viewModel.errorMessage?.let { error ->
+            Spacer(modifier = Modifier.height(16.dp))
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.1f)
+                ),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.3f))
+            ) {
+                Text(
+                    text = error,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Sign In Link
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = "¿Ya tienes cuenta? ",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+            )
+            Text(
+                text = "Iniciar Sesión",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.clickable { onNavigateBack() }
+            )
+        }
+    }
+}

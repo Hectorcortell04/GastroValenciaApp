@@ -1,6 +1,7 @@
 package com.hectorgonzalez.gastrovalenciaapp.data.repository
 
 import com.hectorgonzalez.gastrovalenciaapp.data.datasource.user.UserDataSource
+import com.hectorgonzalez.gastrovalenciaapp.data.datasource.user.dto.RegisterUserDto
 import com.hectorgonzalez.gastrovalenciaapp.data.datasource.user.dto.UserDto
 import com.hectorgonzalez.gastrovalenciaapp.domain.entity.User
 import java.time.LocalDateTime
@@ -11,8 +12,12 @@ class UserRepository(
     suspend fun getAllUsers(): List<User> =
         remoteDataSource.fetchUsers().map { it.toUser() }
 
-    suspend fun getUserId(uid:String) : User =
+    suspend fun getUserId(uid: String): User =
         remoteDataSource.getUserId(uid).toUser()
+
+    suspend fun registerUser(registerData: RegisterUserDto) {
+        remoteDataSource.registerUser(registerData)
+    }
 }
 
 fun UserDto.toUser(): User =

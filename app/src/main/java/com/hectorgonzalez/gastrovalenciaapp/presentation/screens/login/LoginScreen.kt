@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
@@ -50,10 +51,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withLink
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -63,6 +69,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun LoginScreen(
     onLoginSuccess: () -> Unit,
+    navigateToRegisterScreen: () -> Unit,
     viewModel: LoginViewModel = viewModel()
 ) {
     var email by remember { mutableStateOf("") }
@@ -235,7 +242,7 @@ fun LoginScreen(
                                     onClick = { passwordVisible = !passwordVisible }
                                 ) {
                                     Icon(
-                                        imageVector = if (passwordVisible) Icons.Default.CheckCircle else Icons.Default.Lock,
+                                        painter = if (passwordVisible) painterResource(R.drawable.ic_eye_open) else painterResource(R.drawable.ic_eye_closed),
                                         contentDescription = if (passwordVisible) "Ocultar contraseña" else "Mostrar contraseña"
                                     )
                                 }
@@ -361,7 +368,21 @@ fun LoginScreen(
                 )
             ) {
                 Text(
-                    text = "Al iniciar sesión, aceptas nuestros términos y condiciones",
+                    text = buildAnnotatedString {
+                        append("¿Todavía no tienes cuenta? ")
+                        withLink(
+                            LinkAnnotation.Clickable(
+                                tag = "register",
+                                linkInteractionListener = {
+                                    navigateToRegisterScreen()
+                                }
+                            )
+                        ) {
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append("Regístrate")
+                            }
+                        }
+                    },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                     textAlign = TextAlign.Center,

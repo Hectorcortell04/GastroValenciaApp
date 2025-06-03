@@ -13,6 +13,7 @@ import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.events.EventsSc
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.login.LoginScreen
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.privacyPolitics.PrivacyPoliticsScreen
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.profile.ProfileScreen
+import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.register.RegisterScreen
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.restaurantDetail.RestaurantDetailScreen
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.restaurants.RestaurantsScreen
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.splash.SplashScreen
@@ -21,6 +22,7 @@ import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.termsAndConditi
 sealed class AppScreens(val route: String) {
     data object Splash : AppScreens("splash")
     data object Login : AppScreens("login")
+    data object Register : AppScreens("register")
     data object Events : AppScreens("events")
     data object Restaurants : AppScreens("restaurants")
     data object Profile : AppScreens("profile")
@@ -65,6 +67,17 @@ fun AppNavHost(navController: NavHostController) {
                     navController.navigate(AppScreens.Events.route) {
                         popUpTo(AppScreens.Login.route) { inclusive = true }
                     }
+                },
+                navigateToRegisterScreen = {
+                    navController.navigate(AppScreens.Register.route)
+                }
+            )
+        }
+
+        composable(AppScreens.Register.route) {
+            RegisterScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
             )
         }
