@@ -152,7 +152,7 @@ fun RegisterScreen(
                 fullName = it
                 nameError = if (it.isBlank()) "El nombre completo es obligatorio" else ""
             },
-            label = { Text("Nombre Completo") },
+            label = { Text("Nombre completo") },
             placeholder = { Text("Introduce tu nombre completo") },
             leadingIcon = {
                 Icon(
@@ -220,7 +220,7 @@ fun RegisterScreen(
                     else -> ""
                 }
             },
-            label = { Text("URL de Imagen (Opcional)") },
+            label = { Text("URL de Imagen") },
             placeholder = { Text("https://ejemplo.com/imagen.jpg") },
             leadingIcon = {
                 Icon(
@@ -303,7 +303,7 @@ fun RegisterScreen(
                     else -> ""
                 }
             },
-            label = { Text("Confirmar Contraseña") },
+            label = { Text("Confirmar contraseña") },
             placeholder = { Text("Confirma tu contraseña") },
             leadingIcon = {
                 Icon(
@@ -374,7 +374,7 @@ fun RegisterScreen(
                 )
             } else {
                 Text(
-                    text = "Crear Cuenta",
+                    text = "Registrarse",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )

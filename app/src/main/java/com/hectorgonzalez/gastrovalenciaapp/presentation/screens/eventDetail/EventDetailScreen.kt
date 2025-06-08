@@ -101,7 +101,6 @@ fun EventDetailScreen(
     val event = viewModel.event
     val isLoading = viewModel.isLoading
     val error = viewModel.errorMessage
-    val isLiked = viewModel.isLiked
     val isLikingInProgress = viewModel.isLikingInProgress
     val scrollState = rememberScrollState()
 
@@ -133,11 +132,14 @@ fun EventDetailScreen(
                                 strokeWidth = 2.dp
                             )
                         } else {
-                            Icon(
-                                imageVector = if (isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                contentDescription = if (isLiked) "Quitar de favoritos" else "Añadir a favoritos",
-                                tint = if (isLiked) Color.Red else MaterialTheme.colorScheme.onSurface
-                            )
+                            if (event != null) {
+                                Icon(
+                                    imageVector = if (event.liked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                    contentDescription = if (event.liked) "Quitar de favoritos" else "Añadir a favoritos",
+                                    tint = if (event.liked) Color.Red else MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
                         }
                     }
                 }
@@ -316,7 +318,7 @@ fun EventDetailScreen(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = "${event.price}€",
+                                    text = if (event.price == 0.0) "Gratis" else String.format("%.2f€", event.price),
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.Bold
                                 )

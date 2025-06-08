@@ -1,8 +1,10 @@
 package com.hectorgonzalez.gastrovalenciaapp.presentation.screens.restaurants
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,12 +13,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,7 +40,11 @@ import com.hectorgonzalez.gastrovalenciaapp.domain.entity.Restaurant
 
 @SuppressLint("DefaultLocale")
 @Composable
-fun RestaurantCard(restaurant: Restaurant, onClick: () -> Unit) {
+fun RestaurantCard(
+    restaurant: Restaurant,
+    onClick: () -> Unit,
+    onLikeClick: () -> Unit = {}
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -42,29 +54,57 @@ fun RestaurantCard(restaurant: Restaurant, onClick: () -> Unit) {
         shape = RoundedCornerShape(12.dp)
     ) {
         Column {
-            AsyncImage(
-                model = if (restaurant.restaurantImages.isNotEmpty()) restaurant.restaurantImages[0] else "",
-                contentDescription = "Imagen de ${restaurant.name}",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(180.dp)
-            )
+            Box(modifier = Modifier.height(180.dp)) {
+                AsyncImage(
+                    model = if (restaurant.restaurantImages.isNotEmpty()) restaurant.restaurantImages[0] else "",
+                    contentDescription = "Imagen de ${restaurant.name}",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(180.dp)
+                )
+
+                // Botón de like en la esquina superior derecha
+                IconButton(
+                    onClick = onLikeClick,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(12.dp)
+                        .size(42.dp)
+                        .background(Color.White.copy(alpha = 0.8f), CircleShape)
+                ) {
+                    Icon(
+                        imageVector = if (restaurant.liked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = if (restaurant.liked) "Quitar de favoritos" else "Añadir a favoritos",
+                        tint = if (restaurant.liked) Color.Red else MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+
+                // Etiqueta de tipo de restaurante en la esquina superior izquierda
+                AssistChip(
+                    onClick = { },
+                    colors = AssistChipDefaults.assistChipColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.9f),
+                        labelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(12.dp),
+                    label = {
+                        Text(
+                            text = restaurant.foodType,
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
+                )
+            }
 
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                Text(
-                    text = restaurant.foodType,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Medium
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
                 Text(
                     text = restaurant.name,
                     style = MaterialTheme.typography.titleLarge,
@@ -130,10 +170,11 @@ fun RestaurantCardPreview() {
                 restaurantImages = listOf(),
                 menuImage = "",
                 description = "Restaurante con las mejores tapas y platos mediterráneos en el centro de Madrid.",
-                isLike = true,
+                liked = true,
                 restaurantWeb = ""
             ),
-            onClick = {}
+            onClick = {},
+            onLikeClick = {}
         )
     }
 }

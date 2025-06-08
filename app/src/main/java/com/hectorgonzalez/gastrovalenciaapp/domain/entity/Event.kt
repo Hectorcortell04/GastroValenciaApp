@@ -11,6 +11,6 @@ data class Event(
     val description: String,
     val duration: String,
     val eventImage: String?,
-    val isLike: Boolean?,
+    val liked: Boolean,
     val eventWeb: String?
 )

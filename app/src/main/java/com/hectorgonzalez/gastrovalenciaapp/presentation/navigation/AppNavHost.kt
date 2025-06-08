@@ -7,7 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.hectorgonzalez.gastrovalenciaapp.presentation.favorites.FavoritesScreen
+import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.favorites.FavoritesScreen
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.eventDetail.EventDetailScreen
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.events.EventsScreen
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.login.LoginScreen
@@ -29,9 +29,11 @@ sealed class AppScreens(val route: String) {
     data object EventDetail : AppScreens("event/{eventId}") {
         fun createRoute(eventId: Int) = "event/$eventId"
     }
+
     data object RestaurantDetail : AppScreens("restaurant/{restaurantId}") {
         fun createRoute(restaurantId: Int) = "restaurant/$restaurantId"
     }
+
     data object TermsAndConditions : AppScreens("termsAndConditions")
     data object PrivacyPolitics : AppScreens("privacyPolitics")
     data object Favorites : AppScreens("favorites")
@@ -158,7 +160,9 @@ fun AppNavHost(navController: NavHostController) {
         }
 
         composable(AppScreens.Favorites.route) {
-            FavoritesScreen()
+            FavoritesScreen(
+                onBackClick = { navController.popBackStack() },
+                )
         }
 
         composable(

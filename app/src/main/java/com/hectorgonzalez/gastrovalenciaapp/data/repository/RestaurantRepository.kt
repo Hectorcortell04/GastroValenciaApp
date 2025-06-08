@@ -3,20 +3,26 @@ package com.hectorgonzalez.gastrovalenciaapp.data.repository
 import com.hectorgonzalez.gastrovalenciaapp.data.datasource.restaurant.RestaurantDataSource
 import com.hectorgonzalez.gastrovalenciaapp.data.datasource.restaurant.dto.RestaurantDto
 import com.hectorgonzalez.gastrovalenciaapp.domain.entity.Restaurant
+import retrofit2.http.Path
 
 class RestaurantRepository(
     private val remoteDataSource: RestaurantDataSource = RestaurantDataSource()
 ) {
-    suspend fun getRestaurants(): List<Restaurant> {
-        return remoteDataSource.getRestaurants().map { it.toDomain() }
+    suspend fun getRestaurants(userId: String): List<Restaurant> {
+        return remoteDataSource.getRestaurants(userId).map { it.toDomain() }
     }
-    suspend fun getRestaurantById(id : String): Restaurant{
-        return remoteDataSource.getRestaurantById(id).toDomain()
+    suspend fun getRestaurantById(restaurantId : String, userId: String): Restaurant{
+        return remoteDataSource.getRestaurantById(restaurantId,userId).toDomain()
     }
     suspend fun getRestaurantsByName(name :String): List<Restaurant> {
         return remoteDataSource.getRestaurantsByName(name).map { it.toDomain() }
     }
-
+    suspend fun listRestaurantLikes(userId :String): List<Restaurant> {
+        return remoteDataSource.listRestaurantLikes(userId).map { it.toDomain() }
+    }
+    suspend fun toggleRestaurantLike(restaurantId : String, userId : String) {
+        return remoteDataSource.toggleRestaurantLike(restaurantId, userId)
+    }
 }
 
 fun RestaurantDto.toDomain(): Restaurant {
@@ -30,7 +36,7 @@ fun RestaurantDto.toDomain(): Restaurant {
         restaurantImages = this.restaurantImages,
         menuImage = this.menuImage ?: "",
         description = this.description,
-        isLike = this.isLike,
+        liked = this.liked,
         restaurantWeb = this.restaurantWeb
     )
 }

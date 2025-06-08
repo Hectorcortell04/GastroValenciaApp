@@ -1,5 +1,3 @@
-package com.hectorgonzalez.gastrovalenciaapp.presentation.screens.restaurantDetail
-
 import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -12,7 +10,7 @@ import com.hectorgonzalez.gastrovalenciaapp.utils.UserManager
 import kotlinx.coroutines.launch
 
 class RestaurantDetailViewModel(
-    private val restaurantsUseCase: RestaurantUseCase = RestaurantUseCase()
+    private val restaurantUseCase: RestaurantUseCase = RestaurantUseCase()
 ) : ViewModel() {
 
     // Estado del restaurante actual
@@ -27,10 +25,6 @@ class RestaurantDetailViewModel(
     var errorMessage by mutableStateOf<String?>(null)
         private set
 
-    // Estado de favorito/like
-    var isLiked by mutableStateOf(false)
-        private set
-
     // Estado de carga para el like (para mostrar loading en el botón)
     var isLikingInProgress by mutableStateOf(false)
         private set
@@ -39,17 +33,23 @@ class RestaurantDetailViewModel(
      * Carga un restaurante específico por su ID
      */
     fun loadRestaurant(restaurantId: Int, context: Context) {
+        val userId = UserManager.getUserId(context)
+
+        if (userId == null) {
+            errorMessage = "Usuario no encontrado. Por favor, inicia sesión nuevamente."
+            return
+        }
+
         viewModelScope.launch {
             isLoading = true
             errorMessage = null
 
             try {
-                val loadedRestaurant = restaurantsUseCase.getRestaurantById(restaurantId.toString())
+                val loadedRestaurant = restaurantUseCase.getRestaurantById(
+                    restaurantId.toString(),
+                    userId = userId.toString()
+                )
                 restaurant = loadedRestaurant
-
-                // Verificar si el restaurante está marcado como favorito/liked
-                checkIfRestaurantIsLiked(restaurantId, context)
-
             } catch (e: Exception) {
                 errorMessage = e.localizedMessage ?: "Error desconocido al cargar el restaurante"
                 restaurant = null
@@ -60,29 +60,8 @@ class RestaurantDetailViewModel(
     }
 
     /**
-     * Verifica si el restaurante actual está marcado como favorito
-     * Nota: Aquí asumo que tienes un método para verificar si está liked.
-     * Si no lo tienes, puedes omitir esta verificación o implementarla según tu lógica.
-     */
-    private suspend fun checkIfRestaurantIsLiked(restaurantId: Int, context: Context) {
-        try {
-            val userId = UserManager.getUserId(context)
-            if (userId != null) {
-                // Si tienes un método para verificar si está liked:
-                // isLiked = restaurantsUseCase.isRestaurantLiked(restaurantId.toString(), userId.toString())
-
-                // Si no tienes el método, por ahora lo dejamos en false
-                isLiked = false
-            }
-        } catch (e: Exception) {
-            // Si hay error al verificar likes, simplemente no marcamos como liked
-            isLiked = false
-        }
-    }
-
-    /**
      * Alterna el estado de like del restaurante actual
-     * El método likeRestaurant maneja automáticamente like/unlike
+     * El método toggleLike maneja automáticamente like/unlike
      */
     fun toggleLike(context: Context) {
         val currentRestaurant = restaurant ?: return
@@ -95,13 +74,60 @@ class RestaurantDetailViewModel(
 
         viewModelScope.launch {
             isLikingInProgress = true
+
+            // Guardamos el estado actual por si hay error
+            val previousLikedState = currentRestaurant.liked
+            val newLikedState = !previousLikedState // 🔥 CALCULAR EL NUEVO ESTADO
+
             try {
-               // restaurantsUseCase.likeRestaurant(currentRestaurant.id.toString(), userId.toString())
-                isLiked = !isLiked
+                // ✅ CORRECCIÓN: Actualizamos optimísticamente la UI con el estado OPUESTO
+                restaurant = currentRestaurant.copy(liked = newLikedState)
+
+                // Llamamos al servidor
+                restaurantUseCase.toggleRestaurantLike(currentRestaurant.id.toString(), userId.toString())
+
+                // Si llegamos aquí, la operación fue exitosa
+                // El estado ya está actualizado optimísticamente con el valor correcto
 
             } catch (e: Exception) {
-                errorMessage = "Error al actualizar like: ${e.localizedMessage}"
-                // No cambiamos isLiked para mantener el estado anterior en caso de error
+                // En caso de error, revertimos al estado anterior
+                restaurant = currentRestaurant.copy(liked = previousLikedState)
+                errorMessage = "Error al actualizar favorito: ${e.localizedMessage}"
+            } finally {
+                isLikingInProgress = false
+            }
+        }
+    }
+
+    /**
+     * Versión alternativa más segura (sin actualización optimista)
+     * Úsala si sigues teniendo problemas con la versión optimista
+     */
+    fun toggleLikeSafe(context: Context) {
+        val currentRestaurant = restaurant ?: return
+        val userId = UserManager.getUserId(context)
+
+        if (userId == null) {
+            errorMessage = "Error: Usuario no encontrado. Por favor, inicia sesión nuevamente."
+            return
+        }
+
+        viewModelScope.launch {
+            isLikingInProgress = true
+
+            try {
+                // Llamar al servidor SIN actualización optimista
+                restaurantUseCase.toggleRestaurantLike(currentRestaurant.id.toString(), userId.toString())
+
+                // Obtener el estado real desde el servidor
+                val updatedRestaurant = restaurantUseCase.getRestaurantById(
+                    currentRestaurant.id.toString(),
+                    userId.toString()
+                )
+                restaurant = updatedRestaurant
+
+            } catch (e: Exception) {
+                errorMessage = "Error al actualizar favorito: ${e.localizedMessage}"
             } finally {
                 isLikingInProgress = false
             }
@@ -126,32 +152,6 @@ class RestaurantDetailViewModel(
     }
 
     /**
-     * Maneja la acción de reservar (placeholder para futura implementación)
-     */
-    fun onReserveClick() {
-        // TODO: Implementar lógica de reserva
-        // Ejemplo: navegar a web externa, abrir formulario de reserva, etc.
-    }
-
-    /**
-     * Maneja la acción de ver el menú completo
-     */
-    fun onViewMenuClick() {
-        // TODO: Implementar lógica para mostrar menú completo
-        // Esto podría activar un estado para mostrar un diálogo o navegar a otra pantalla
-    }
-
-    /**
-     * Maneja la acción de compartir restaurante
-     */
-    fun shareRestaurant() {
-        val currentRestaurant = restaurant ?: return
-
-        // TODO: Implementar lógica para compartir restaurante
-        // Ejemplo: crear intent de compartir con información del restaurante
-    }
-
-    /**
      * Limpia el estado del ViewModel
      */
     override fun onCleared() {
@@ -159,7 +159,6 @@ class RestaurantDetailViewModel(
         restaurant = null
         errorMessage = null
         isLoading = false
-        isLiked = false
         isLikingInProgress = false
     }
 }

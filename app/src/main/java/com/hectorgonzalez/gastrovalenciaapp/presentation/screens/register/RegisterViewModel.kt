@@ -68,7 +68,7 @@ class RegisterViewModel(
         // TODO: Implementar Firebase Authentication
         // FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
         // Por ahora retornamos un UID simulado
-        return "P2hBsntFhJctI4J2FZ3Rx3xoGqE3"
+        return "PuetsvjvIsX77JyojcDpyXnzCm02"
     }
 
     fun clearError() {

@@ -7,13 +7,20 @@ import com.hectorgonzalez.gastrovalenciaapp.data.networkClient.NetworkClient
 class RestaurantDataSource {
     private val restaurantApi = NetworkClient.instance.create(RestaurantApi::class.java)
 
-    suspend fun getRestaurants(): List<RestaurantDto> {
-        return restaurantApi.getRestaurants()
+    suspend fun getRestaurants(userId: String): List<RestaurantDto> {
+        return restaurantApi.getRestaurants(userId)
     }
-    suspend fun getRestaurantById(id : String): RestaurantDto{
-        return restaurantApi.getRestaurantById(id)
+    suspend fun getRestaurantById(restaurantId : String, userId : String): RestaurantDto{
+        return restaurantApi.getRestaurantById(restaurantId, userId)
     }
     suspend fun getRestaurantsByName(name : String): List<RestaurantDto>{
         return restaurantApi.getRestaurantsByName(name)
     }
+    suspend fun listRestaurantLikes(userId:String) : List<RestaurantDto> {
+        return restaurantApi.listRestaurantLikes(userId)
+    }
+    suspend fun toggleRestaurantLike(restaurantId : String, userId : String) {
+        return restaurantApi.likeRestaurants(restaurantId, userId)
+    }
+
 }

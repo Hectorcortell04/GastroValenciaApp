@@ -1,5 +1,6 @@
 package com.hectorgonzalez.gastrovalenciaapp.presentation.screens.restaurantDetail
 
+import RestaurantDetailViewModel
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -69,7 +70,7 @@ import coil.compose.AsyncImage
 import com.hectorgonzalez.gastrovalenciaapp.R
 import com.hectorgonzalez.gastrovalenciaapp.domain.entity.Restaurant
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RestaurantDetailScreen(
     restaurantId: Int,
@@ -95,7 +96,6 @@ fun RestaurantDetailScreen(
     val restaurant = viewModel.restaurant
     val isLoading = viewModel.isLoading
     val error = viewModel.errorMessage
-    val isLiked = viewModel.isLiked
     val isLikingInProgress = viewModel.isLikingInProgress
 
     var showFullMenu by remember { mutableStateOf(false) }
@@ -124,7 +124,9 @@ fun RestaurantDetailScreen(
                     IconButton(
                         onClick = {
                             if (!isLikingInProgress) {
-                                viewModel.toggleLike(context)
+                                if (restaurant != null){
+                                    viewModel.toggleLike(context)
+                                }
                             }
                         },
                         enabled = !isLikingInProgress && restaurant != null
@@ -135,11 +137,13 @@ fun RestaurantDetailScreen(
                                 strokeWidth = 2.dp
                             )
                         } else {
-                            Icon(
-                                imageVector = if (isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                contentDescription = if (isLiked) "Quitar de favoritos" else "Añadir a favoritos",
-                                tint = if (isLiked) Color.Red else MaterialTheme.colorScheme.onSurface
-                            )
+                            if (restaurant != null) {
+                                Icon(
+                                    imageVector = if (restaurant.liked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                    contentDescription = if (restaurant.liked) "Quitar de favoritos" else "Añadir a favoritos",
+                                    tint = if (restaurant.liked) Color.Red else MaterialTheme.colorScheme.onSurface
+                                )
+                            }
                         }
                     }
                 },

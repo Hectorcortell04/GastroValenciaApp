@@ -14,11 +14,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -32,6 +34,12 @@ fun RestaurantsScreen(
     val restaurants = viewModel.restaurants
     val isLoading = viewModel.isLoading
     val error = viewModel.errorMessage
+
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchRestaurants(context)
+    }
 
     Column(
         modifier = Modifier
@@ -63,7 +71,8 @@ fun RestaurantsScreen(
                     val restaurant = restaurants[index]
                     RestaurantCard(
                         restaurant = restaurant,
-                        onClick = { navigateToRestaurantDetail.invoke(restaurant.id) }
+                        onLikeClick = { viewModel.toggleRestaurantLike(restaurant.id, context)}, //TODO hacer like
+                        onClick = { navigateToRestaurantDetail.invoke(restaurant.id) },
                     )
                 }
             }

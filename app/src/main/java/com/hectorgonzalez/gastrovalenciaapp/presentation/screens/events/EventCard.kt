@@ -44,14 +44,12 @@ import com.hectorgonzalez.gastrovalenciaapp.domain.entity.Event
 fun EventCard(
     event: Event,
     imageUrl: String,
-    isLiked: Boolean,
     onLikeClick: () -> Unit,
     onCardClick: () -> Unit = {},
-    modifier: Modifier = Modifier
 ) {
     Card(
         shape = RoundedCornerShape(16.dp),
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth(),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 4.dp,
@@ -94,9 +92,9 @@ fun EventCard(
                         .background(Color.White.copy(alpha = 0.8f), CircleShape)
                 ) {
                     Icon(
-                        imageVector = if (isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = if (isLiked) "Quitar de favoritos" else "Añadir a favoritos",
-                        tint = if (isLiked) Color.Red else MaterialTheme.colorScheme.primary,
+                        imageVector = if (event.liked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = if (event.liked) "Quitar de favoritos" else "Añadir a favoritos",
+                        tint = if (event.liked) Color.Red else MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -120,6 +118,7 @@ fun EventCard(
                 )
 
                 // Precio destacado en el borde inferior derecho
+                // Precio destacado en el borde inferior derecho
                 Surface(
                     color = MaterialTheme.colorScheme.primary,
                     shape = RoundedCornerShape(topStart = 16.dp),
@@ -130,21 +129,28 @@ fun EventCard(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
                     ) {
-                        Text(
-                            text = "%.2f".format(event.price),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-
-                        Icon(
-                            painter = painterResource(R.drawable.ic_euro),
-                            contentDescription = "Precio",
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.size(16.dp)
-                        )
-
+                        if (event.price > 0) {
+                            Text(
+                                text = "%.2f".format(event.price),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Icon(
+                                painter = painterResource(R.drawable.ic_euro),
+                                contentDescription = "Precio",
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        } else {
+                            Text(
+                                text = "Gratis",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
                     }
                 }
             }

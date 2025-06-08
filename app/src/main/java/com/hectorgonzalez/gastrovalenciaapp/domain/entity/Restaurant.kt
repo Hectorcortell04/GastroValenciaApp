@@ -10,6 +10,6 @@ data class Restaurant(
     val restaurantImages: List<String>,
     val menuImage: String,
     val description: String,
-    val isLike: Boolean?,
+    val liked: Boolean,
     val restaurantWeb: String?
 )

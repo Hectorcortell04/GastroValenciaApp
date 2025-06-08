@@ -50,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -62,7 +63,6 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.firebase.auth.FirebaseAuth
 import com.hectorgonzalez.gastrovalenciaapp.R
 import kotlinx.coroutines.delay
 
@@ -72,12 +72,15 @@ fun LoginScreen(
     navigateToRegisterScreen: () -> Unit,
     viewModel: LoginViewModel = viewModel()
 ) {
+    val context = LocalContext.current
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
-    var isLoading by remember { mutableStateOf(false) }
     var passwordVisible by remember { mutableStateOf(false) }
     var showContent by remember { mutableStateOf(false) }
+
+    // Observar cambios en el ViewModel
+    val isLoading = viewModel.isLoading
+    val errorMessage = viewModel.errorMessage
 
     // Animación de entrada
     LaunchedEffect(Unit) {
@@ -138,23 +141,21 @@ fun LoginScreen(
                 ) {
                     // Logo y título
                     Card(
-                        modifier = Modifier.size(100.dp),
-                        shape = RoundedCornerShape(25.dp),
+                        modifier = Modifier.size(180.dp),
+                        shape = RoundedCornerShape(45.dp),
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.primary
                         ),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                        elevation = CardDefaults.cardElevation(defaultElevation = 16.dp)
                     ) {
-                        // Reemplaza con tu logo
                         Image(
                             painter = painterResource(id = R.drawable.img_logo_gastrovalencia),
                             contentDescription = "GastroValencia Logo",
                             modifier = Modifier.fillMaxSize(),
                         )
-
                     }
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(40.dp))
 
                     Text(
                         text = "¡Bienvenido de vuelta!",
@@ -166,7 +167,7 @@ fun LoginScreen(
                     )
 
                     Text(
-                        text = "Descubre los mejores sabores de Valencia",
+                        text = "Descubre los mejores sitios y sabores de Valencia",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
                         textAlign = TextAlign.Center,
@@ -203,7 +204,7 @@ fun LoginScreen(
                             value = email,
                             onValueChange = {
                                 email = it
-                                errorMessage = null // Limpiar error al escribir
+                                viewModel.clearError() // Limpiar error al escribir
                             },
                             label = { Text("Correo electrónico") },
                             placeholder = { Text("ejemplo@gastrovalencia.com") },
@@ -219,7 +220,8 @@ fun LoginScreen(
                                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                                 unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
                             ),
-                            singleLine = true
+                            singleLine = true,
+                            enabled = !isLoading
                         )
 
                         // Campo de contraseña
@@ -227,7 +229,7 @@ fun LoginScreen(
                             value = password,
                             onValueChange = {
                                 password = it
-                                errorMessage = null // Limpiar error al escribir
+                                viewModel.clearError() // Limpiar error al escribir
                             },
                             label = { Text("Contraseña") },
                             placeholder = { Text("Tu contraseña segura") },
@@ -254,7 +256,8 @@ fun LoginScreen(
                                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                                 unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
                             ),
-                            singleLine = true
+                            singleLine = true,
+                            enabled = !isLoading
                         )
 
                         // Mensaje de error
@@ -284,28 +287,12 @@ fun LoginScreen(
                         // Botón de login
                         Button(
                             onClick = {
-                                if (email.isBlank() || password.isBlank()) {
-                                    errorMessage = "Por favor, completa todos los campos"
-                                    return@Button
-                                }
-
-                                isLoading = true
-                                errorMessage = null
-                                FirebaseAuth.getInstance()
-                                    .signInWithEmailAndPassword(email, password)
-                                    .addOnCompleteListener { task ->
-                                        isLoading = false
-                                        if (task.isSuccessful) {
-                                            onLoginSuccess()
-                                        } else {
-                                            errorMessage = when (task.exception?.message) {
-                                                "The email address is badly formatted." -> "El formato del correo electrónico no es válido"
-                                                "There is no user record corresponding to this identifier. The user may have been deleted." -> "No existe una cuenta con este correo electrónico"
-                                                "The password is invalid or the user does not have a password." -> "La contraseña es incorrecta"
-                                                else -> "Error al iniciar sesión. Verifica tus credenciales"
-                                            }
-                                        }
-                                    }
+                                viewModel.login(
+                                    email = email,
+                                    password = password,
+                                    context = context,
+                                    onSuccess = onLoginSuccess
+                                )
                             },
                             enabled = !isLoading && email.isNotBlank() && password.isNotBlank(),
                             modifier = Modifier
@@ -383,7 +370,7 @@ fun LoginScreen(
                             }
                         }
                     },
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(horizontal = 16.dp)

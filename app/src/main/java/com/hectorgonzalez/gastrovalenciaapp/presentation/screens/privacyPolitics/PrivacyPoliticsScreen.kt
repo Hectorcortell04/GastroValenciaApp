@@ -125,130 +125,146 @@ fun PrivacyPoliticsScreen(
     }
 }
 
-/**
- * Función que contiene la política de privacidad por defecto
- * Puedes modificar este contenido según las necesidades específicas de tu aplicación
- */
+
 private fun getDefaultPrivacyPolitics(): String {
     return """
-        **Última actualización: [26 de mayo 2025]**
-        
-        **POLÍTICA DE PRIVACIDAD DE GASTROVALENCIA**
-        
-        En GastroValencia, nos comprometemos a proteger su privacidad y garantizar el uso responsable de su información personal. Esta Política de Privacidad explica cómo recopilamos, utilizamos, divulgamos y protegemos su información cuando utiliza nuestra aplicación móvil.
-        
-        **1. INFORMACIÓN QUE RECOPILAMOS**
-        
-        **Información Personal:**
-        • Nombre y apellidos
-        • Dirección de correo electrónico
-        • Número de teléfono (opcional)
-        • Fecha de nacimiento (opcional)
-        • Preferencias gastronómicas
-        
-        **Información de Uso:**
-        • Restaurantes visitados y marcados como favoritos
-        • Reseñas y calificaciones realizadas
-        • Búsquedas y filtros utilizados
-        • Tiempo de uso de la aplicación
-        • Funciones más utilizadas
-        
-        **Información de Ubicación:**
-        • Ubicación aproximada para mostrar restaurantes cercanos
-        • Historial de ubicaciones visitadas (solo si otorga permisos)
-        
-        **Información del Dispositivo:**
-        • Tipo de dispositivo y sistema operativo
-        • Identificadores únicos del dispositivo
-        • Información de red y conectividad
-        
-        **2. CÓMO UTILIZAMOS SU INFORMACIÓN**
-        
-        Utilizamos su información personal para:
-        
-        • Proporcionar y mejorar nuestros servicios
-        • Personalizar su experiencia en la aplicación
-        • Mostrar restaurantes relevantes según su ubicación
-        • Enviar notificaciones sobre ofertas y promociones
-        • Responder a sus consultas y proporcionar soporte técnico
-        • Analizar el uso de la aplicación para mejoras futuras
-        • Cumplir con obligaciones legales
-        
-        **3. COMPARTIR INFORMACIÓN**
-        
-        **No vendemos** su información personal a terceros. Podemos compartir su información en las siguientes circunstancias:
-        
-        • **Restaurantes Asociados:** Información básica para procesar reservas
-        • **Proveedores de Servicios:** Empresas que nos ayudan a operar la aplicación
-        • **Requisitos Legales:** Cuando sea requerido por ley o autoridades competentes
-        • **Reseñas Públicas:** Las reseñas que publique serán visibles para otros usuarios
-        
-        **4. COOKIES Y TECNOLOGÍAS SIMILARES**
-        
-        Utilizamos cookies y tecnologías similares para:
-        
-        • Recordar sus preferencias y configuraciones
-        • Analizar el rendimiento de la aplicación
-        • Personalizar contenido y anuncios
-        • Proporcionar funciones de redes sociales
-        
-        Puede gestionar las preferencias de cookies desde la configuración de la aplicación.
-        
-        **5. SEGURIDAD DE DATOS**
-        
-        Implementamos medidas de seguridad técnicas y organizativas para proteger su información:
-        
-        • Encriptación de datos en tránsito y en reposo
-        • Acceso restringido a información personal
-        • Monitoreo regular de sistemas de seguridad
-        • Auditorías de seguridad periódicas
-        
-        **6. SUS DERECHOS**
-        
-        De acuerdo con el RGPD y normativas locales, usted tiene derecho a:
-        
-        • **Acceso:** Solicitar una copia de su información personal
-        • **Rectificación:** Corregir información inexacta o incompleta
-        • **Eliminación:** Solicitar la eliminación de su información
-        • **Portabilidad:** Recibir sus datos en formato estructurado
-        • **Oposición:** Oponerse al procesamiento de sus datos
-        • **Limitación:** Restringir el procesamiento de sus datos
-        
-        **7. RETENCIÓN DE DATOS**
-        
-        Conservamos su información personal solo durante el tiempo necesario para:
-        
-        • Proporcionar nuestros servicios
-        • Cumplir con obligaciones legales
-        • Resolver disputas
-        • Hacer cumplir nuestros acuerdos
-        
-        **8. MENORES DE EDAD**
-        
-        Nuestra aplicación no está dirigida a menores de 16 años. No recopilamos intencionalmente información personal de menores sin el consentimiento parental apropiado.
-        
-        **9. CAMBIOS EN ESTA POLÍTICA**
-        
-        Podemos actualizar esta Política de Privacidad ocasionalmente. Le notificaremos sobre cambios significativos a través de la aplicación o por correo electrónico.
-        
-        **10. TRANSFERENCIAS INTERNACIONALES**
-        
-        Su información puede ser transferida y procesada en países fuera del Espacio Económico Europeo. Garantizamos protecciones adecuadas mediante cláusulas contractuales estándar.
-        
-        **11. CONTACTO**
-        
-        Para ejercer sus derechos o hacer consultas sobre privacidad:
-        
-        **Responsable de Protección de Datos:**
-        Email: privacidad@gastrovalencia.com
-        Teléfono: +34 XXX XXX XXX
-        Dirección: [Dirección física de la empresa]
-        
-        **Autoridad de Control:**
-        Agencia Española de Protección de Datos (AEPD)
-        Web: www.aepd.es
-        
-        **© 2024 GastroValencia. Todos los derechos reservados.**
+       1. INFORMACIÓN QUE RECOPILAMOS
+Información personal:
+Nombre y apellidos
+
+Correo electrónico
+
+Número de teléfono
+
+Fecha de nacimiento
+
+Preferencias gastronómicas
+
+Información de uso:
+Restaurantes marcados como favoritos
+
+Reseñas y puntuaciones realizadas
+
+Filtros y búsquedas utilizadas
+
+Tiempo de navegación y uso de funcionalidades
+
+Interacciones dentro de la app
+
+Información de ubicación:
+Ubicación aproximada para mostrar contenido relevante
+
+Historial de localizaciones (solo si se concede permiso explícito)
+
+Información del dispositivo:
+Tipo de dispositivo (por ejemplo, Android o iPhone)
+
+Versión del sistema operativo
+
+Identificadores únicos (ID de dispositivo)
+
+Datos de conexión (Wi-Fi, red móvil, etc.)
+
+2. CÓMO UTILIZAMOS SU INFORMACIÓN
+La información recopilada se utiliza para:
+
+Ofrecer funcionalidades clave de la aplicación
+
+Personalizar su experiencia de usuario
+
+Mostrarle contenido y recomendaciones adaptadas a su ubicación y preferencias
+
+Enviarle notificaciones sobre eventos, descuentos o nuevos restaurantes
+
+Atender consultas y brindar soporte técnico
+
+Realizar análisis anónimos para mejorar la calidad de nuestros servicios
+
+Cumplir con obligaciones legales y de seguridad
+
+3. COMPARTICIÓN DE DATOS
+No vendemos sus datos personales. Solo compartimos su información en los siguientes casos:
+
+Restaurantes colaboradores: para gestionar ofertas o reservas que usted solicite
+
+Proveedores tecnológicos: servicios de almacenamiento en la nube, análisis y comunicación
+
+Obligaciones legales: si lo exige una autoridad competente
+
+Contenido público: las reseñas y calificaciones que realice serán visibles para otros usuarios
+
+4. COOKIES Y TECNOLOGÍAS SIMILARES
+Utilizamos cookies y tecnologías de seguimiento para:
+
+Recordar sus preferencias
+
+Medir el rendimiento de la aplicación
+
+Mejorar la experiencia de usuario
+
+Mostrar contenido relevante
+
+Puede configurar o desactivar estas funciones desde los ajustes de la aplicación.
+
+5. SEGURIDAD DE LOS DATOS
+Aplicamos medidas técnicas y organizativas para proteger su información, incluyendo:
+
+Encriptación de datos sensibles
+
+Accesos limitados y autenticados a la base de datos
+
+Monitorización constante de vulnerabilidades
+
+Auditorías internas periódicas de seguridad
+
+6. DERECHOS DEL USUARIO
+En cumplimiento del RGPD, usted puede ejercer en cualquier momento los siguientes derechos:
+
+Acceso a sus datos personales
+
+Rectificación de datos incorrectos
+
+Supresión de su información cuando lo desee
+
+Limitación del tratamiento en determinados casos
+
+Oposición al uso de sus datos para fines específicos
+
+Portabilidad de sus datos en formato estructurado
+
+7. RETENCIÓN DE INFORMACIÓN
+Solo conservamos sus datos mientras sean necesarios para:
+
+Prestar nuestros servicios
+
+Cumplir con la legislación vigente
+
+Resolver disputas o problemas técnicos
+
+Hacer valer nuestras condiciones de uso
+
+8. MENORES DE EDAD
+La aplicación no está diseñada para menores de 16 años. Si descubrimos que hemos recopilado datos sin consentimiento parental, procederemos a eliminarlos de forma inmediata.
+
+9. CAMBIOS EN LA POLÍTICA
+Podemos actualizar esta política en función de cambios legales o mejoras del servicio. Le notificaremos de cualquier modificación relevante a través de la aplicación o por correo electrónico.
+
+10. TRANSFERENCIAS INTERNACIONALES
+Podemos almacenar y procesar su información en servidores ubicados fuera del Espacio Económico Europeo (por ejemplo, servicios en la nube como Firebase). Garantizamos un nivel adecuado de protección mediante cláusulas contractuales tipo aprobadas por la Comisión Europea.
+
+11. CONTACTO
+Si desea ejercer sus derechos o tiene alguna pregunta relacionada con la privacidad, puede contactar con nuestro delegado de protección de datos:
+
+Responsable de Protección de Datos
+Email: privacidad@gastrovalencia.com
+Teléfono: +34 960 123 456
+Dirección: Carrer de les Barques, 12 – 4º, 46002 València, España
+
+Autoridad Supervisora:
+Agencia Española de Protección de Datos (AEPD)
+www.aepd.es
+
+
     """.trimIndent()
 }
 
@@ -257,7 +273,7 @@ private fun getDefaultPrivacyPolitics(): String {
 fun PrivacyPoliticsScreenPreview() {
     MaterialTheme {
         PrivacyPoliticsScreen(
-            onBackClick = { /* Preview action */ }
+            onBackClick = {}
         )
     }
 }

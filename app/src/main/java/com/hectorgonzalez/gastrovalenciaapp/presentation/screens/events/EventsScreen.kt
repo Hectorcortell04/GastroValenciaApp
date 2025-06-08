@@ -14,11 +14,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -27,6 +29,12 @@ fun EventsScreen(
     navigateToEventDetail: (Int) -> Unit,
     viewModel: EventViewModel = viewModel()
 ) {
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchEvents(context)
+    }
+
     var searchText by remember { mutableStateOf("") }
     val events = viewModel.events
     val isLoading = viewModel.isLoading
@@ -61,8 +69,9 @@ fun EventsScreen(
                     EventCard(
                         event = event,
                         imageUrl = event.eventImage ?: "",
-                        isLiked = false,
-                        onLikeClick = {},
+                        onLikeClick = {
+                            viewModel.toggleEventLike(event.id, context)
+                        },
                         onCardClick = {
                             navigateToEventDetail(event.id)
                         }

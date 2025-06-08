@@ -7,20 +7,23 @@ import com.hectorgonzalez.gastrovalenciaapp.domain.entity.Event
 class EventRepository(
     private val remoteDataSource: EventDataSource = EventDataSource()
 ) {
-    suspend fun getEvents(): List<Event> {
-        return remoteDataSource.getAllEvents().map { it.toDomain() }
+    suspend fun getEvents(userId:String): List<Event> {
+        return remoteDataSource.getAllEvents(userId).map { it.toDomain() }
     }
 
     suspend fun getEventsByName(name:String): List<Event> {
         return remoteDataSource.getEventsByName(name).map { it.toDomain() }
     }
 
-    suspend fun getEventById(id:String): Event {
-        return remoteDataSource.getEventById(id).toDomain()
+    suspend fun getEventById(eventId: String, userId: String): Event {
+        return remoteDataSource.getEventById(eventId,userId).toDomain()
     }
 
     suspend fun likeEvent(eventId:String,userId:String){
         return remoteDataSource.likeEvent(eventId,userId)
+    }
+    suspend fun listEventsLikes(userId:String) : List<Event>{
+        return remoteDataSource.listEventsLikes(userId).map { it.toDomain() }
     }
 
 }
@@ -32,11 +35,11 @@ private fun EventDto.toDomain(): Event {
         category = this.category,
         location = this.location,
         date = this.date,
-        time = this.time ?: "19.00",
+        time = this.time,
         price = this.price,
         description = this.description,
         duration = this.duration,
-        isLike = this.isLike,
+        liked = this.liked,
         eventImage = this.eventImage,
         eventWeb = this.eventWeb
     )

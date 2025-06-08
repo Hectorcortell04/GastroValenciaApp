@@ -1,4 +1,4 @@
-package com.hectorgonzalez.gastrovalenciaapp.presentation.favorites
+package com.hectorgonzalez.gastrovalenciaapp.presentation.screens.favorites
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocationOn
@@ -32,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +48,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.hectorgonzalez.gastrovalenciaapp.domain.entity.Event
@@ -53,85 +56,16 @@ import com.hectorgonzalez.gastrovalenciaapp.domain.entity.Restaurant
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FavoritesScreen() {
-    // Mock data - será reemplazado por ViewModel
-    val events = listOf(
-        Event(
-            id = 1,
-            name = "Festival Gastronómico Valencia",
-            category = "Gastronómico",
-            location = "Ciudad de las Artes",
-            date = "15/06/2025",
-            time = "18:00",
-            price = 25.0,
-            description = "Festival con los mejores chefs de Valencia",
-            duration = "4 horas", eventImage = "", eventWeb = "" , isLike = false
-        ),
-        Event(
-            id = 2,
-            name = "Taller de Paella Tradicional",
-            category = "Taller",
-            location = "Mercado Central",
-            date = "20/06/2025",
-            time = "10:00",
-            price = 45.0,
-            description = "Aprende a hacer paella auténtica valenciana",
-            duration = "3 horas", eventImage = "", eventWeb = "" , isLike = false
-        ),
-        Event(
-            id = 3,
-            name = "Cata de Vinos Valencianos",
-            category = "Cata",
-            location = "Bodega El Raco",
-            date = "25/06/2025",
-            time = "19:30",
-            price = 0.0,
-            description = "Degustación gratuita de vinos locales",
-            duration = "2 horas", eventImage = "", eventWeb = "" , isLike = false
-        )
-    )
+fun FavoritesScreen(
+    onBackClick: () -> Unit,
+    viewModel: FavoritesViewModel = viewModel()
+) {
+    val context = LocalContext.current
 
-    val restaurants = listOf(
-        Restaurant(
-            id = 1,
-            name = "Casa Roberto",
-            foodType = "Cocina Valenciana",
-            address = "Calle de la Paz, 15",
-            rating = 4.5,
-            averagePrice = 35.0,
-            restaurantImages = listOf("https://example.com/casa-roberto.jpg"),
-            menuImage = "https://example.com/menu-casa-roberto.jpg",
-            description = "Auténtica cocina valenciana desde 1920",
-            isLike = true,
-            restaurantWeb = ""
-        ),
-        Restaurant(
-            id = 2,
-            name = "El Jardín Secreto",
-            foodType = "Mediterránea",
-            address = "Plaza del Ayuntamiento, 8",
-            rating = 4.8,
-            averagePrice = 55.0,
-            restaurantImages = listOf("https://example.com/jardin-secreto.jpg"),
-            menuImage = "https://example.com/menu-jardin.jpg",
-            description = "Cocina mediterránea con toques modernos",
-            isLike = true,
-            restaurantWeb = ""
-        ),
-        Restaurant(
-            id = 3,
-            name = "Tapas & Más",
-            foodType = "Tapas",
-            address = "Barrio del Carmen, 22",
-            rating = 4.2,
-            averagePrice = 18.0,
-            restaurantImages = emptyList(),
-            menuImage = "",
-            description = "Las mejores tapas del centro histórico",
-            isLike = true,
-            restaurantWeb = ""
-        )
-    )
+    LaunchedEffect(Unit) {
+        viewModel.fetchEvents(context)
+        viewModel.fetchRestaurants(context)
+    }
 
     // Mock callbacks - serán reemplazados por ViewModel
     val onEventClick: (Event) -> Unit = { event ->
@@ -162,7 +96,6 @@ fun FavoritesScreen() {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // Top App Bar
         TopAppBar(
             title = {
                 Text(
@@ -170,6 +103,14 @@ fun FavoritesScreen() {
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
+            },
+            navigationIcon = {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Regresar"
+                    )
+                }
             },
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.surface
@@ -205,14 +146,14 @@ fun FavoritesScreen() {
         ) {
             when (selectedTab) {
                 0 -> { // Todos
-                    items(events) { event ->
+                    items(viewModel.events) { event ->
                         EventCard(
                             event = event,
                             onClick = { onEventClick(event) },
                             onRemoveFavorite = { onRemoveEventFavorite(event) }
                         )
                     }
-                    items(restaurants) { restaurant ->
+                    items(viewModel.restaurants) { restaurant ->
                         RestaurantCard(
                             restaurant = restaurant,
                             onClick = { onRestaurantClick(restaurant) },
@@ -222,7 +163,7 @@ fun FavoritesScreen() {
                 }
 
                 1 -> { // Solo Eventos
-                    items(events) { event ->
+                    items(viewModel.events) { event ->
                         EventCard(
                             event = event,
                             onClick = { onEventClick(event) },
@@ -232,7 +173,7 @@ fun FavoritesScreen() {
                 }
 
                 2 -> { // Solo Restaurantes
-                    items(restaurants) { restaurant ->
+                    items(viewModel.restaurants) { restaurant ->
                         RestaurantCard(
                             restaurant = restaurant,
                             onClick = { onRestaurantClick(restaurant) },
@@ -245,7 +186,6 @@ fun FavoritesScreen() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventCard(
     event: Event,
@@ -274,17 +214,29 @@ fun EventCard(
                 modifier = Modifier
                     .size(60.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(
-                        color = MaterialTheme.colorScheme.primaryContainer
-                    ),
+                    .background(MaterialTheme.colorScheme.secondaryContainer),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Default.DateRange,
-                    contentDescription = "Evento",
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier.size(28.dp)
-                )
+                if (event.eventImage?.isNotEmpty()!!) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(event.eventImage)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = "Imagen del evento",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(8.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = "Evento",
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
             }
 
             // Información del evento
@@ -372,7 +324,7 @@ fun EventCard(
                 }
 
                 Text(
-                    text = if (event.price > 0) "${event.price}€" else "Gratis",
+                    text = if (event.price > 0) "${String.format("%.2f", event.price)}€" else "Gratis",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -382,7 +334,6 @@ fun EventCard(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RestaurantCard(
     restaurant: Restaurant,
@@ -522,7 +473,7 @@ fun RestaurantCard(
                 }
 
                 Text(
-                    text = "~${restaurant.averagePrice}€",
+                    text = String.format("%.2f€", restaurant.averagePrice),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
