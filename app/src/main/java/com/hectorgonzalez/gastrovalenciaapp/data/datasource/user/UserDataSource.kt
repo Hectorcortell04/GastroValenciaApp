@@ -1,6 +1,7 @@
 package com.hectorgonzalez.gastrovalenciaapp.data.datasource.user
 
 import com.hectorgonzalez.gastrovalenciaapp.data.datasource.user.api.UserApi
+import com.hectorgonzalez.gastrovalenciaapp.data.datasource.user.dto.RegisterRequest
 import com.hectorgonzalez.gastrovalenciaapp.data.datasource.user.dto.RegisterUserDto
 import com.hectorgonzalez.gastrovalenciaapp.data.datasource.user.dto.UserDto
 import com.hectorgonzalez.gastrovalenciaapp.data.networkClient.NetworkClient
@@ -14,6 +15,7 @@ class UserDataSource {
     suspend fun getUserId(uid: String): UserDto =
         userApi.getUserId(uid)
 
-    suspend fun registerUser(registerUserData : RegisterUserDto) : UserDto =
-        userApi.registerUser(registerUserData)
+    suspend fun registerUser(request: RegisterRequest, token: String): UserDto {
+        return userApi.registerUser(request, "Bearer $token")
+    }
 }

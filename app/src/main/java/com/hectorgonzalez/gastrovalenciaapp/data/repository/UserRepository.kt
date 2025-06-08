@@ -5,6 +5,8 @@ import com.hectorgonzalez.gastrovalenciaapp.data.datasource.user.dto.RegisterUse
 import com.hectorgonzalez.gastrovalenciaapp.data.datasource.user.dto.UserDto
 import com.hectorgonzalez.gastrovalenciaapp.domain.entity.User
 import java.time.LocalDateTime
+import com.hectorgonzalez.gastrovalenciaapp.data.datasource.user.dto.RegisterRequest
+
 
 class UserRepository(
     private val remoteDataSource: UserDataSource = UserDataSource()
@@ -15,8 +17,12 @@ class UserRepository(
     suspend fun getUserId(uid: String): User =
         remoteDataSource.getUserId(uid).toUser()
 
-    suspend fun registerUser(registerData: RegisterUserDto) {
-        remoteDataSource.registerUser(registerData)
+//    suspend fun registerUser(registerData: RegisterUserDto) {
+//        remoteDataSource.registerUser(registerData)
+//    }
+
+    suspend fun registerUser(registerData: RegisterRequest, token: String) {
+        remoteDataSource.registerUser(registerData, token)
     }
 }
 
