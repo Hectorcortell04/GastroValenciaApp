@@ -1,7 +1,9 @@
 package com.hectorgonzalez.gastrovalenciaapp.presentation.screens.login
 
 import android.content.Context
-import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
@@ -11,7 +13,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class LoginViewModel(
-    private val userUseCase: UserUseCase = UserUseCase() // Asume que tienes este UseCase
+    private val userUseCase: UserUseCase = UserUseCase()
 ) : ViewModel() {
 
     var isLoading by mutableStateOf(false)
@@ -36,25 +38,21 @@ class LoginViewModel(
             errorMessage = null
 
             try {
-                // 1. Autenticar con Firebase
+                //Autenticar con Firebase
                 val authResult = FirebaseAuth.getInstance()
                     .signInWithEmailAndPassword(email, password)
                     .await()
 
                 val firebaseUser = authResult.user
                 if (firebaseUser != null) {
-                    // 2. Obtener datos completos del usuario desde tu API/base de datos
                     val userData = userUseCase.getUserId(firebaseUser.uid)
 
                     if (userData != null) {
-                        // 3. Guardar el userId localmente
                         UserManager.saveUserId(context, userData.id)
-
-                        // 4. Login exitoso
                         onSuccess()
                     } else {
                         errorMessage = "No se pudieron obtener los datos del usuario"
-                        FirebaseAuth.getInstance().signOut() // Cerrar sesión si no hay datos
+                        FirebaseAuth.getInstance().signOut()
                     }
                 } else {
                     errorMessage = "Error de autenticación"

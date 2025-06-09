@@ -1,7 +1,9 @@
 package com.hectorgonzalez.gastrovalenciaapp.presentation.screens.events
 
 import android.content.Context
-import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hectorgonzalez.gastrovalenciaapp.domain.entity.Event
@@ -28,6 +30,7 @@ class EventViewModel(
     var isLikingInProgress by mutableStateOf(false)
         private set
 
+    // Carga inicial de eventos (se llama al entrar en la pantalla)
     fun fetchEvents(context: Context) {
         val userId = UserManager.getUserId(context)
 
@@ -48,6 +51,7 @@ class EventViewModel(
         }
     }
 
+    // Buscar eventos por nombre con un pequeño retraso (debounce)
     fun searchEventsByName(name: String) {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
@@ -63,6 +67,7 @@ class EventViewModel(
         }
     }
 
+    // Marcar o desmarcar like en un evento
     fun toggleEventLike(eventId: Int, context: Context) {
         val userId = UserManager.getUserId(context)
 
@@ -87,7 +92,6 @@ class EventViewModel(
             val newLikedState = !previousLikedState
 
             try {
-                // ✅ ACTUALIZACIÓN OPTIMISTA: Cambiar la UI INMEDIATAMENTE
                 events = events.map { event ->
                     if (event.id == eventId) {
                         event.copy(liked = newLikedState)
@@ -96,14 +100,10 @@ class EventViewModel(
                     }
                 }
 
-                // Ahora hacer la llamada al servidor
+                // Ahora hace la llamada al servidor
                 eventsUseCase.toggleLike(eventId.toString(), userId.toString())
 
-                // Si llegamos aquí, la operación fue exitosa
-                // La UI ya está actualizada con el estado correcto
-
             } catch (e: Exception) {
-                // ❌ ERROR: Revertir el cambio en la UI
                 events = events.map { event ->
                     if (event.id == eventId) {
                         event.copy(liked = previousLikedState)
@@ -118,49 +118,8 @@ class EventViewModel(
         }
     }
 
-    /**
-     * Versión alternativa más segura que actualiza desde el servidor
-     * Úsala solo si la versión optimista te da problemas
-     */
-    fun toggleEventLikeSafe(eventId: Int, context: Context) {
-        val userId = UserManager.getUserId(context)
-
-        if (userId == null) {
-            errorMessage = "Usuario no encontrado. Por favor, inicia sesión nuevamente."
-            return
-        }
-
-        viewModelScope.launch {
-            isLikingInProgress = true
-
-            try {
-                // Hacer la llamada al servidor sin actualización optimista
-                eventsUseCase.toggleLike(eventId.toString(), userId.toString())
-
-                // Obtener el evento actualizado desde el servidor
-                val updatedEvent = eventsUseCase.getEventById(eventId.toString(), userId.toString())
-
-                events = events.map { event ->
-                    if (event.id == eventId) {
-                        updatedEvent
-                    } else {
-                        event
-                    }
-                }
-
-            } catch (e: Exception) {
-                errorMessage = "Error al actualizar favorito: ${e.localizedMessage}"
-            } finally {
-                isLikingInProgress = false
-            }
-        }
-    }
-
+    // Limpia el mensaje de error para que no se repita en pantalla
     fun clearError() {
         errorMessage = null
-    }
-
-    fun retryFetchEvents(context: Context) {
-        fetchEvents(context)
     }
 }

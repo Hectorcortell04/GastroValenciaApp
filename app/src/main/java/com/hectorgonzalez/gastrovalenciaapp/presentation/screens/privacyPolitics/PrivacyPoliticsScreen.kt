@@ -125,7 +125,7 @@ fun PrivacyPoliticsScreen(
     }
 }
 
-
+// Texto
 private fun getDefaultPrivacyPolitics(): String {
     return """
        1. INFORMACIÓN QUE RECOPILAMOS
@@ -268,6 +268,7 @@ www.aepd.es
     """.trimIndent()
 }
 
+// Vista previa, para verla runnear
 @Preview(showBackground = true)
 @Composable
 fun PrivacyPoliticsScreenPreview() {

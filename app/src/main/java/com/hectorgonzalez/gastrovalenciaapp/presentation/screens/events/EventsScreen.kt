@@ -31,6 +31,7 @@ fun EventsScreen(
 ) {
     val context = LocalContext.current
 
+    // Cargamos los eventos al entrar en la pantalla
     LaunchedEffect(Unit) {
         viewModel.fetchEvents(context)
     }
@@ -40,9 +41,12 @@ fun EventsScreen(
     val isLoading = viewModel.isLoading
     val error = viewModel.errorMessage
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        // Campo de búsqueda con icono
         OutlinedTextField(
             value = searchText,
             onValueChange = {

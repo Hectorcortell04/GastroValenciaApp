@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -49,6 +48,9 @@ import coil.compose.AsyncImage
 import com.google.firebase.auth.FirebaseAuth
 import com.hectorgonzalez.gastrovalenciaapp.R
 
+
+// Pantalla de perfil del usuario, contiene datos personales, navegación y cierre de sesión
+
 @Composable
 fun ProfileScreen(
     onLogout: () -> Unit = {},
@@ -86,7 +88,7 @@ fun ProfileScreen(
             TopAppBar()
             UserProfileSection(
                 userName = user?.name ?: "...",
-                userImg =user?.userImage ,
+                userImg = user?.userImage,
                 userMail = user?.email ?: "..."
             )
             MenuOptions(
@@ -95,14 +97,15 @@ fun ProfileScreen(
                 navigateToPrivacyPolitics = navigateToPrivacyPolitics,
                 navigateToFavorites = navigateToFavorites,
                 navigateToMyDiscounts = navigateToMyDiscounts,
-                userId = user?.id ?: 0 //Si el id llegase nulo se le pasa 0 ya que no existe y no cargaría los descuentos.
+                userId = user?.id
+                    ?: 0
             )
             Spacer(modifier = Modifier.weight(1f))
             AppVersionFooter()
         }
     }
 
-    // Dialog de confirmación para cerrar sesión
+    // Diálogo de confirmación para cerrar sesión
     if (showLogoutDialog) {
         LogoutConfirmationDialog(
             onConfirm = {
@@ -118,6 +121,7 @@ fun ProfileScreen(
     }
 }
 
+//Muestra el diálogo de confirmación
 @Composable
 fun LogoutConfirmationDialog(
     onConfirm: () -> Unit,
@@ -190,11 +194,12 @@ fun TopAppBar() {
         HorizontalDivider(
             thickness = 1.dp,
             color = LightGray,
-            modifier = Modifier.padding(top=16.dp)
+            modifier = Modifier.padding(top = 16.dp)
         )
     }
 }
 
+// Sección que muestra el nombre, foto y correo del usuario
 @Composable
 fun UserProfileSection(
     userName: String,
@@ -245,9 +250,10 @@ fun UserProfileSection(
     }
 }
 
+// Menú con todas las opciones del perfil
 @Composable
 fun MenuOptions(
-    userId : Int,
+    userId: Int,
     onLogOut: () -> Unit = {},
     navigateToTermsAndConditions: () -> Unit = {},
     navigateToPrivacyPolitics: () -> Unit = {},
@@ -290,6 +296,7 @@ fun MenuOptions(
     }
 }
 
+// Cada fila del menú
 @Composable
 fun MenuOption(drawableId: Int, text: String, showChevron: Boolean, onClick: () -> Unit = {}) {
     Row(
@@ -327,6 +334,7 @@ fun MenuOption(drawableId: Int, text: String, showChevron: Boolean, onClick: () 
     )
 }
 
+// Muestra el logo y la versión de la app
 @Composable
 fun AppVersionFooter() {
     Box(

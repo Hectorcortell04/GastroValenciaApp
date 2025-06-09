@@ -4,34 +4,56 @@ import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.util.PatternsCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hectorgonzalez.gastrovalenciaapp.R
 
+// Pantalla de registro donde se recogen y validan los datos del usuario para crear cuenta
 @Composable
 fun RegisterScreen(
     onNavigateBack: () -> Unit = {},
@@ -47,7 +69,7 @@ fun RegisterScreen(
     var showPassword by remember { mutableStateOf(false) }
     var showConfirmPassword by remember { mutableStateOf(false) }
 
-    // Validation states
+    // Estados de validación
     var nameError by remember { mutableStateOf("") }
     var emailError by remember { mutableStateOf("") }
     var passwordError by remember { mutableStateOf("") }
@@ -67,7 +89,7 @@ fun RegisterScreen(
         }
     }
 
-    // Check if all fields are valid
+    // Comrpobar si los campos son válidos
     val isFormValid = fullName.isNotBlank() &&
             nameError.isEmpty() &&
             email.isNotBlank() &&
@@ -81,7 +103,7 @@ fun RegisterScreen(
             password.length >= 6 &&
             confirmPassword == password
 
-    // Observar el estado de éxito del registro
+    // Comprobación de que el usuario se ha registrado correctamente
     LaunchedEffect(viewModel.isRegistrationSuccessful) {
         if (viewModel.isRegistrationSuccessful) {
             // Navegar a login o pantalla principal después del registro exitoso
@@ -99,7 +121,7 @@ fun RegisterScreen(
             viewModel.clearError()
         }
     }
-
+    // Contenedor principal
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -108,8 +130,7 @@ fun RegisterScreen(
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        // Header with back button
+        // Header
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -127,8 +148,6 @@ fun RegisterScreen(
                 )
             }
         }
-
-        // Title and subtitle
         Text(
             text = "Crear Cuenta",
             style = MaterialTheme.typography.headlineLarge,
@@ -145,7 +164,6 @@ fun RegisterScreen(
             modifier = Modifier.padding(bottom = 40.dp)
         )
 
-        // Full Name Field
         OutlinedTextField(
             value = fullName,
             onValueChange = {
@@ -175,14 +193,16 @@ fun RegisterScreen(
             )
         )
 
-        // Email Field
+
         OutlinedTextField(
             value = email,
             onValueChange = {
                 email = it
                 emailError = when {
                     it.isBlank() -> "El email es obligatorio"
-                    !PatternsCompat.EMAIL_ADDRESS.matcher(it).matches() -> "Formato de email inválido"
+                    !PatternsCompat.EMAIL_ADDRESS.matcher(it)
+                        .matches() -> "Formato de email inválido"
+
                     else -> ""
                 }
             },
@@ -210,7 +230,6 @@ fun RegisterScreen(
             )
         )
 
-        // Image URL Field
         OutlinedTextField(
             value = imageUrl,
             onValueChange = {
@@ -235,8 +254,11 @@ fun RegisterScreen(
                 { Text(imageUrlError, color = MaterialTheme.colorScheme.error) }
             } else {
                 {
-                    Text("Si no se proporciona, se usará una imagen por defecto",
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)) }
+                    Text(
+                        "Si no se proporciona, se usará una imagen por defecto",
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+                    )
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -248,7 +270,6 @@ fun RegisterScreen(
             )
         )
 
-        // Password Field
         OutlinedTextField(
             value = password,
             onValueChange = {
@@ -271,7 +292,9 @@ fun RegisterScreen(
             trailingIcon = {
                 IconButton(onClick = { showPassword = !showPassword }) {
                     Icon(
-                        painter = if (showPassword) painterResource(R.drawable.ic_eye_open) else painterResource(R.drawable.ic_eye_closed),
+                        painter = if (showPassword) painterResource(R.drawable.ic_eye_open) else painterResource(
+                            R.drawable.ic_eye_closed
+                        ),
                         contentDescription = if (showPassword) "Ocultar contraseña" else "Mostrar contraseña"
                     )
                 }
@@ -292,7 +315,6 @@ fun RegisterScreen(
             )
         )
 
-        // Confirm Password Field
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = {
@@ -315,7 +337,9 @@ fun RegisterScreen(
             trailingIcon = {
                 IconButton(onClick = { showConfirmPassword = !showConfirmPassword }) {
                     Icon(
-                        painter = if (showConfirmPassword) painterResource(R.drawable.ic_eye_open) else painterResource(R.drawable.ic_eye_closed),
+                        painter = if (showConfirmPassword) painterResource(R.drawable.ic_eye_open) else painterResource(
+                            R.drawable.ic_eye_closed
+                        ),
                         contentDescription = if (showConfirmPassword) "Ocultar contraseña" else "Mostrar contraseña"
                     )
                 }
@@ -335,8 +359,7 @@ fun RegisterScreen(
                 unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
             )
         )
-
-        // Sign Up Button
+        // Botón de registro
         Button(
             onClick = {
                 if (isFormValid) {
@@ -346,7 +369,6 @@ fun RegisterScreen(
                         password = password,
                         imageUrl = imageUrl.ifBlank { "" }, // Si está vacío, se usará la imagen por defecto en el ViewModel
                         onSuccess = {
-                            // Mostrar toast de éxito
                             Toast.makeText(
                                 context,
                                 "Usuario creado con éxito",
@@ -381,7 +403,6 @@ fun RegisterScreen(
             }
         }
 
-        // Mostrar mensaje de error si existe
         viewModel.errorMessage?.let { error ->
             Spacer(modifier = Modifier.height(16.dp))
             Card(
@@ -402,7 +423,7 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Sign In Link
+        // Enlace para volver a login si ya tiene cuenta
         Row(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()

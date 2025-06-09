@@ -67,26 +67,22 @@ fun FavoritesScreen(
         viewModel.fetchRestaurants(context)
     }
 
-    // Mock callbacks - serán reemplazados por ViewModel
     val onEventClick: (Event) -> Unit = { event ->
-        // TODO: Navegar a detalle del evento
         println("Clicked event: ${event.name}")
     }
 
     val onRestaurantClick: (Restaurant) -> Unit = { restaurant ->
-        // TODO: Navegar a detalle del restaurante
         println("Clicked restaurant: ${restaurant.name}")
     }
 
     val onRemoveEventFavorite: (Event) -> Unit = { event ->
-        // TODO: Implementar eliminación de favorito
         println("Remove event favorite: ${event.name}")
     }
 
     val onRemoveRestaurantFavorite: (Restaurant) -> Unit = { restaurant ->
-        // TODO: Implementar eliminación de favorito
         println("Remove restaurant favorite: ${restaurant.name}")
     }
+    // Control de pestañas: 0 = todos, 1 = eventos, 2 = restaurantes
     var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOf("Todos", "Eventos", "Restaurantes")
 
@@ -138,14 +134,14 @@ fun FavoritesScreen(
             }
         }
 
-        // Content
+        // Contenido
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             when (selectedTab) {
-                0 -> { // Todos
+                0 -> {
                     items(viewModel.events) { event ->
                         EventCard(
                             event = event,
@@ -162,7 +158,7 @@ fun FavoritesScreen(
                     }
                 }
 
-                1 -> { // Solo Eventos
+                1 -> {
                     items(viewModel.events) { event ->
                         EventCard(
                             event = event,
@@ -324,7 +320,12 @@ fun EventCard(
                 }
 
                 Text(
-                    text = if (event.price > 0) "${String.format("%.2f", event.price)}€" else "Gratis",
+                    text = if (event.price > 0) "${
+                        String.format(
+                            "%.2f",
+                            event.price
+                        )
+                    }€" else "Gratis",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary

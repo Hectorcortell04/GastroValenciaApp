@@ -33,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.hectorgonzalez.gastrovalenciaapp.domain.entity.Restaurant
@@ -152,29 +151,5 @@ fun RestaurantCard(
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun RestaurantCardPreview() {
-    MaterialTheme {
-        RestaurantCard(
-            restaurant = Restaurant(
-                id = 1,
-                name = "La Taberna del Chef",
-                foodType = "Mediterránea",
-                address = "Calle Mayor 123, Madrid",
-                rating = 4.7,
-                averagePrice = 25.50,
-                restaurantImages = listOf(),
-                menuImage = "",
-                description = "Restaurante con las mejores tapas y platos mediterráneos en el centro de Madrid.",
-                liked = true,
-                restaurantWeb = ""
-            ),
-            onClick = {},
-            onLikeClick = {}
-        )
     }
 }

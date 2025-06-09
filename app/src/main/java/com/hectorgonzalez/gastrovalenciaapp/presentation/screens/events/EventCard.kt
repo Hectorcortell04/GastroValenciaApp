@@ -47,6 +47,7 @@ fun EventCard(
     onLikeClick: () -> Unit,
     onCardClick: () -> Unit = {},
 ) {
+    // Card principal del evento
     Card(
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
@@ -117,7 +118,6 @@ fun EventCard(
                     }
                 )
 
-                // Precio destacado en el borde inferior derecho
                 // Precio destacado en el borde inferior derecho
                 Surface(
                     color = MaterialTheme.colorScheme.primary,

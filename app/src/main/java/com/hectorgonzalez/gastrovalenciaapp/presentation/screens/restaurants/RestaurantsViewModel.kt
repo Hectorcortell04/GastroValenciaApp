@@ -18,18 +18,21 @@ class RestaurantsViewModel(
 ) : ViewModel() {
     private var searchJob: Job? = null
 
+    // Lista de restaurantes mostrados en la pantalla
     var restaurants by mutableStateOf<List<Restaurant>>(emptyList())
         private set
 
     var isLoading by mutableStateOf(false)
         private set
 
+    // Si ocurre algún error, lo guardamos aquí para mostrarlo en la UI
     var errorMessage by mutableStateOf<String?>(null)
         private set
 
     var isLikingInProgress by mutableStateOf(false)
         private set
 
+    // Llama al UseCase para obtener la lista de restaurantes
     fun fetchRestaurants(context: Context) {
         val userId = UserManager.getUserId(context)
 
@@ -50,13 +53,13 @@ class RestaurantsViewModel(
         }
     }
 
+    // Busca restaurantes por nombre
     fun searchRestaurantsByName(name: String, context: Context? = null) {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
             delay(500)
             isLoading = true
             try {
-                // Si tienes contexto, incluir userId para obtener el estado de likes
                 val userId = context?.let { UserManager.getUserId(it) }
                 restaurants = if (userId != null) {
                     restaurantsUseCase.getRestaurantsByName(name)
@@ -71,9 +74,7 @@ class RestaurantsViewModel(
         }
     }
 
-    /**
-     * Alterna el estado de like de un restaurante
-     */
+    // Alterna el "like" de un restaurante
     fun toggleRestaurantLike(restaurantId: Int, context: Context) {
         val userId = UserManager.getUserId(context)
 
@@ -98,7 +99,6 @@ class RestaurantsViewModel(
             val newLikedState = !previousLikedState
 
             try {
-                // ✅ ACTUALIZACIÓN OPTIMISTA: Cambiar la UI INMEDIATAMENTE
                 restaurants = restaurants.map { restaurant ->
                     if (restaurant.id == restaurantId) {
                         restaurant.copy(liked = newLikedState)
@@ -107,14 +107,10 @@ class RestaurantsViewModel(
                     }
                 }
 
-                // Ahora hacer la llamada al servidor
                 restaurantsUseCase.toggleRestaurantLike(restaurantId.toString(), userId.toString())
 
-                // Si llegamos aquí, la operación fue exitosa
-                // La UI ya está actualizada con el estado correcto
 
             } catch (e: Exception) {
-                // ❌ ERROR: Revertir el cambio en la UI
                 restaurants = restaurants.map { restaurant ->
                     if (restaurant.id == restaurantId) {
                         restaurant.copy(liked = previousLikedState)
@@ -129,55 +125,8 @@ class RestaurantsViewModel(
         }
     }
 
-    /**
-     * Versión alternativa más segura que actualiza desde el servidor
-     * Úsala solo si la versión optimista te da problemas
-     */
-    fun toggleRestaurantLikeSafe(restaurantId: Int, context: Context) {
-        val userId = UserManager.getUserId(context)
-
-        if (userId == null) {
-            errorMessage = "Usuario no encontrado. Por favor, inicia sesión nuevamente."
-            return
-        }
-
-        viewModelScope.launch {
-            isLikingInProgress = true
-
-            try {
-                // Hacer la llamada al servidor sin actualización optimista
-                restaurantsUseCase.toggleRestaurantLike(restaurantId.toString(), userId.toString())
-
-                // Obtener el restaurante actualizado desde el servidor
-                val updatedRestaurant = restaurantsUseCase.getRestaurantById(
-                    restaurantId.toString(),
-                    userId.toString()
-                )
-
-                if (updatedRestaurant != null) {
-                    // Actualizar solo este restaurante en la lista
-                    restaurants = restaurants.map { restaurant ->
-                        if (restaurant.id == restaurantId) {
-                            updatedRestaurant
-                        } else {
-                            restaurant
-                        }
-                    }
-                }
-
-            } catch (e: Exception) {
-                errorMessage = "Error al actualizar favorito: ${e.localizedMessage}"
-            } finally {
-                isLikingInProgress = false
-            }
-        }
-    }
-
+    // Limpia cualquier error que se esté mostrando en la pantalla
     fun clearError() {
         errorMessage = null
-    }
-
-    fun retryFetchRestaurants(context: Context) {
-        fetchRestaurants(context)
     }
 }

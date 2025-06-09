@@ -1,15 +1,19 @@
-package com.hectorgonzalez.gastrovalenciaapp.navigation
+package com.hectorgonzalez.gastrovalenciaapp.presentation.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
+// Composable que define la barra inferior de navegación
 @Composable
 fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
@@ -41,6 +45,7 @@ fun BottomNavigationBar(navController: NavController) {
     }
 }
 
+// Clase para definir los datos de cada item del bottom nav
 data class NavigationItem(
     val label: String,
     val route: String,

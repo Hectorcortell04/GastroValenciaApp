@@ -9,7 +9,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -27,7 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -192,14 +190,4 @@ Teléfono: +34 960 456 789
 
 © 2025 GastroValencia. Todos los derechos reservados.
     """.trimIndent()
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TermsAndConditionsScreenPreview() {
-    MaterialTheme {
-        TermsAndConditionsScreen(
-            onBackClick = { /* Preview action */ }
-        )
-    }
 }

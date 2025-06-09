@@ -1,7 +1,5 @@
 package com.hectorgonzalez.gastrovalenciaapp.presentation.navigation
 
-import com.hectorgonzalez.gastrovalenciaapp.navigation.AppScreens
-import com.hectorgonzalez.gastrovalenciaapp.navigation.BottomNavigationBar
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -10,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
+//Para las pantallas con barra de navegación inferior
 @Composable
 fun MainScaffold(navController: NavHostController, content: @Composable () -> Unit) {
     val navBackStackEntry = navController.currentBackStackEntryAsState().value

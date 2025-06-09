@@ -18,8 +18,8 @@ class DiscountRepository(
 
 fun DiscountDto.toDomain(): Discount =
     Discount(
-       id = this.id,
-       userId = this.userId,
-       membershipLevelId = this.membershipLevelId,
-       discounts = this.discounts
+        id = this.id,
+        userId = this.userId,
+        membershipLevelId = this.membershipLevelId,
+        discounts = this.discounts
     )

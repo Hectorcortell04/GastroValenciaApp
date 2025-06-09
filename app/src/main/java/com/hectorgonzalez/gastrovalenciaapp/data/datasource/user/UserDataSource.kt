@@ -2,10 +2,10 @@ package com.hectorgonzalez.gastrovalenciaapp.data.datasource.user
 
 import com.hectorgonzalez.gastrovalenciaapp.data.datasource.user.api.UserApi
 import com.hectorgonzalez.gastrovalenciaapp.data.datasource.user.dto.RegisterRequest
-import com.hectorgonzalez.gastrovalenciaapp.data.datasource.user.dto.RegisterUserDto
 import com.hectorgonzalez.gastrovalenciaapp.data.datasource.user.dto.UserDto
 import com.hectorgonzalez.gastrovalenciaapp.data.networkClient.NetworkClient
 
+// DataSource que se encarga de conectar con la API de users
 class UserDataSource {
     private val userApi = NetworkClient.instance.create(UserApi::class.java)
 

@@ -50,7 +50,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -81,7 +80,6 @@ fun EventDetailScreen(
             context.startActivity(intent)
         } catch (e: Exception) {
             // Si no se puede abrir, mostrar error en snackbar
-            // viewModel.showError("No se pudo abrir el navegador")
         }
     }
 
@@ -230,7 +228,7 @@ fun EventDetailScreen(
                                 .padding(16.dp)
                         )
                     }
-
+                    // Card con la información principal (fecha, duración, ubicación, categoría, precio)
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -243,6 +241,7 @@ fun EventDetailScreen(
                                 .fillMaxWidth()
                                 .padding(16.dp)
                         ) {
+                            // Fecha y duración
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
@@ -268,7 +267,7 @@ fun EventDetailScreen(
                             }
 
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-
+                            // Ubicación
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
@@ -286,7 +285,7 @@ fun EventDetailScreen(
                             }
 
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-
+                            // Categoría
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
@@ -305,7 +304,7 @@ fun EventDetailScreen(
                             }
 
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-
+                            // Precio
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
@@ -318,7 +317,10 @@ fun EventDetailScreen(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = if (event.price == 0.0) "Gratis" else String.format("%.2f€", event.price),
+                                    text = if (event.price == 0.0) "Gratis" else String.format(
+                                        "%.2f€",
+                                        event.price
+                                    ),
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -353,14 +355,14 @@ fun EventDetailScreen(
                         }
                     }
 
-                    // CARD CLICKEABLE PARA ABRIR WEB
+                    // Card clickeable para abrir web
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(180.dp)
                             .padding(16.dp)
                             .clickable {
-                                openWebUrl(event.eventWeb) // ← AQUÍ SE ABRE LA WEB
+                                openWebUrl(event.eventWeb)
                             },
                         shape = RoundedCornerShape(16.dp),
                         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -392,7 +394,7 @@ fun EventDetailScreen(
                             }
                         }
                     }
-
+                    // Card para acceder a los descuentos del usuario
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()

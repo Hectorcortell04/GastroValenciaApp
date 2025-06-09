@@ -1,4 +1,4 @@
-package com.hectorgonzalez.gastrovalenciaapp.navigation
+package com.hectorgonzalez.gastrovalenciaapp.presentation.navigation
 
 import MyDiscountsScreen
 import androidx.compose.runtime.Composable
@@ -7,9 +7,9 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.favorites.FavoritesScreen
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.eventDetail.EventDetailScreen
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.events.EventsScreen
+import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.favorites.FavoritesScreen
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.login.LoginScreen
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.privacyPolitics.PrivacyPoliticsScreen
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.profile.ProfileScreen
@@ -19,6 +19,7 @@ import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.restaurants.Res
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.splash.SplashScreen
 import com.hectorgonzalez.gastrovalenciaapp.presentation.screens.termsAndConditions.TermsAndConditionsScreen
 
+// Rutas de navegación de la app. Cada pantalla tiene su "route" única
 sealed class AppScreens(val route: String) {
     data object Splash : AppScreens("splash")
     data object Login : AppScreens("login")
@@ -42,6 +43,7 @@ sealed class AppScreens(val route: String) {
     }
 }
 
+// Configuración del NavHost con todas las rutas declaradas arriba
 @Composable
 fun AppNavHost(navController: NavHostController) {
     NavHost(
@@ -62,7 +64,7 @@ fun AppNavHost(navController: NavHostController) {
                 }
             )
         }
-
+        // Pantalla de login
         composable(AppScreens.Login.route) {
             LoginScreen(
                 onLoginSuccess = {
@@ -75,7 +77,7 @@ fun AppNavHost(navController: NavHostController) {
                 }
             )
         }
-
+        // Pantalla de registro
         composable(AppScreens.Register.route) {
             RegisterScreen(
                 onNavigateBack = {
@@ -83,7 +85,7 @@ fun AppNavHost(navController: NavHostController) {
                 }
             )
         }
-
+        // Listado de eventos
         composable(AppScreens.Events.route) {
             EventsScreen(
                 navigateToEventDetail = { eventId ->
@@ -91,7 +93,7 @@ fun AppNavHost(navController: NavHostController) {
                 }
             )
         }
-
+        // Listado de restaurantes
         composable(AppScreens.Restaurants.route) {
             RestaurantsScreen(
                 navigateToRestaurantDetail = { restaurantId ->
@@ -99,7 +101,7 @@ fun AppNavHost(navController: NavHostController) {
                 }
             )
         }
-
+        // Perfil del usuario
         composable(AppScreens.Profile.route) {
             ProfileScreen(
                 onLogout = {
@@ -121,7 +123,7 @@ fun AppNavHost(navController: NavHostController) {
                 }
             )
         }
-
+        // Detalle de evento
         composable(
             route = AppScreens.EventDetail.route,
             arguments = listOf(navArgument("eventId") { type = NavType.IntType })
@@ -135,7 +137,7 @@ fun AppNavHost(navController: NavHostController) {
                 }
             )
         }
-
+        // Detalle de restaurante
         composable(
             route = AppScreens.RestaurantDetail.route,
             arguments = listOf(navArgument("restaurantId") { type = NavType.IntType })
@@ -146,25 +148,25 @@ fun AppNavHost(navController: NavHostController) {
                 onBackClick = { navController.popBackStack() }
             )
         }
-
+        // Términos y condiciones
         composable(AppScreens.TermsAndConditions.route) {
             TermsAndConditionsScreen(
                 onBackClick = { navController.popBackStack() }
             )
         }
-
+        // Política de privacidad
         composable(AppScreens.PrivacyPolitics.route) {
             PrivacyPoliticsScreen(
                 onBackClick = { navController.popBackStack() }
             )
         }
-
+        // Favoritos del usuario
         composable(AppScreens.Favorites.route) {
             FavoritesScreen(
                 onBackClick = { navController.popBackStack() },
-                )
+            )
         }
-
+        // Descuentos del usuario
         composable(
             route = AppScreens.MyDiscounts.route,
             arguments = listOf(navArgument("userId") { type = NavType.IntType })

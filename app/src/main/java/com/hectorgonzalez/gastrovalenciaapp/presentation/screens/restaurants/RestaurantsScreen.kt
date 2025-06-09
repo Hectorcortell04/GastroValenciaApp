@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
+// Navegación al detalle del restaurante seleccionado
 @Composable
 fun RestaurantsScreen(
     navigateToRestaurantDetail: (Int) -> Unit,
@@ -48,7 +49,7 @@ fun RestaurantsScreen(
     ) {
         OutlinedTextField(
             value = searchText,
-            onValueChange ={
+            onValueChange = {
                 searchText = it
                 viewModel.searchRestaurantsByName(it)
             },
@@ -71,7 +72,12 @@ fun RestaurantsScreen(
                     val restaurant = restaurants[index]
                     RestaurantCard(
                         restaurant = restaurant,
-                        onLikeClick = { viewModel.toggleRestaurantLike(restaurant.id, context)}, //TODO hacer like
+                        onLikeClick = {
+                            viewModel.toggleRestaurantLike(
+                                restaurant.id,
+                                context
+                            )
+                        },
                         onClick = { navigateToRestaurantDetail.invoke(restaurant.id) },
                     )
                 }

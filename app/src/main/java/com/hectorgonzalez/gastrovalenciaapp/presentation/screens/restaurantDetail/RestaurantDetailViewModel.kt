@@ -29,9 +29,7 @@ class RestaurantDetailViewModel(
     var isLikingInProgress by mutableStateOf(false)
         private set
 
-    /**
-     * Carga un restaurante específico por su ID
-     */
+    // Carga el restaurante con su información completa desde el backend
     fun loadRestaurant(restaurantId: Int, context: Context) {
         val userId = UserManager.getUserId(context)
 
@@ -59,10 +57,7 @@ class RestaurantDetailViewModel(
         }
     }
 
-    /**
-     * Alterna el estado de like del restaurante actual
-     * El método toggleLike maneja automáticamente like/unlike
-     */
+    // Cambia el estado de "favorito" del restaurante actual
     fun toggleLike(context: Context) {
         val currentRestaurant = restaurant ?: return
         val userId = UserManager.getUserId(context)
@@ -80,17 +75,15 @@ class RestaurantDetailViewModel(
             val newLikedState = !previousLikedState // 🔥 CALCULAR EL NUEVO ESTADO
 
             try {
-                // ✅ CORRECCIÓN: Actualizamos optimísticamente la UI con el estado OPUESTO
                 restaurant = currentRestaurant.copy(liked = newLikedState)
 
-                // Llamamos al servidor
-                restaurantUseCase.toggleRestaurantLike(currentRestaurant.id.toString(), userId.toString())
+                restaurantUseCase.toggleRestaurantLike(
+                    currentRestaurant.id.toString(),
+                    userId.toString()
+                )
 
-                // Si llegamos aquí, la operación fue exitosa
-                // El estado ya está actualizado optimísticamente con el valor correcto
 
             } catch (e: Exception) {
-                // En caso de error, revertimos al estado anterior
                 restaurant = currentRestaurant.copy(liked = previousLikedState)
                 errorMessage = "Error al actualizar favorito: ${e.localizedMessage}"
             } finally {
@@ -99,44 +92,7 @@ class RestaurantDetailViewModel(
         }
     }
 
-    /**
-     * Versión alternativa más segura (sin actualización optimista)
-     * Úsala si sigues teniendo problemas con la versión optimista
-     */
-    fun toggleLikeSafe(context: Context) {
-        val currentRestaurant = restaurant ?: return
-        val userId = UserManager.getUserId(context)
-
-        if (userId == null) {
-            errorMessage = "Error: Usuario no encontrado. Por favor, inicia sesión nuevamente."
-            return
-        }
-
-        viewModelScope.launch {
-            isLikingInProgress = true
-
-            try {
-                // Llamar al servidor SIN actualización optimista
-                restaurantUseCase.toggleRestaurantLike(currentRestaurant.id.toString(), userId.toString())
-
-                // Obtener el estado real desde el servidor
-                val updatedRestaurant = restaurantUseCase.getRestaurantById(
-                    currentRestaurant.id.toString(),
-                    userId.toString()
-                )
-                restaurant = updatedRestaurant
-
-            } catch (e: Exception) {
-                errorMessage = "Error al actualizar favorito: ${e.localizedMessage}"
-            } finally {
-                isLikingInProgress = false
-            }
-        }
-    }
-
-    /**
-     * Reintenta la carga del restaurante en caso de error
-     */
+    // Reintenta cargar el restaurante si ya tengo alguno cargado
     fun retryLoadRestaurant(context: Context) {
         val currentRestaurant = restaurant
         if (currentRestaurant != null) {
@@ -144,16 +100,11 @@ class RestaurantDetailViewModel(
         }
     }
 
-    /**
-     * Limpia el mensaje de error
-     */
+//Limpiar mensaje de error
     fun clearError() {
         errorMessage = null
     }
 
-    /**
-     * Limpia el estado del ViewModel
-     */
     override fun onCleared() {
         super.onCleared()
         restaurant = null

@@ -4,6 +4,7 @@ import com.hectorgonzalez.gastrovalenciaapp.data.datasource.restaurant.api.Resta
 import com.hectorgonzalez.gastrovalenciaapp.data.datasource.restaurant.dto.RestaurantDto
 import com.hectorgonzalez.gastrovalenciaapp.data.networkClient.NetworkClient
 
+// Conecta con la API de Restaurantes
 class RestaurantDataSource {
     private val restaurantApi = NetworkClient.instance.create(RestaurantApi::class.java)
 

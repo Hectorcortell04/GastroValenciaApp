@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hectorgonzalez.gastrovalenciaapp.data.datasource.user.dto.RegisterUserDto
 import com.hectorgonzalez.gastrovalenciaapp.domain.useCase.UserUseCase
 import kotlinx.coroutines.launch
 import com.google.firebase.auth.FirebaseAuth

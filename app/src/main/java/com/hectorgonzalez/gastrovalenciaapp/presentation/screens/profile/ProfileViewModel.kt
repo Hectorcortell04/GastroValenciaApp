@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+// ViewModel que gestiona los datos del usuario
 class ProfileViewModel(
     private val usersUseCase: UserUseCase = UserUseCase()
 ) : ViewModel() {
@@ -19,6 +20,7 @@ class ProfileViewModel(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
+    // Carga los datos del usuario a partir del UID de Firebase
     fun loadUser(firebaseUid: String, context: Context) {
         viewModelScope.launch {
             _isLoading.value = true
@@ -38,6 +40,7 @@ class ProfileViewModel(
         }
     }
 
+    // Guarda el ID del usuario en las preferencias del móvil
     private fun saveUserId(context: Context, userId: Int) {
         val sharedPrefs = context.getSharedPreferences(USER_PREFERENCES, Context.MODE_PRIVATE)
         sharedPrefs.edit()
@@ -45,6 +48,7 @@ class ProfileViewModel(
             .apply()
     }
 
+    // Limpia los datos del usuario almacenados localmente
     fun clearUserData(context: Context) {
         _user.value = null
         val sharedPrefs = context.getSharedPreferences(USER_PREFERENCES, Context.MODE_PRIVATE)

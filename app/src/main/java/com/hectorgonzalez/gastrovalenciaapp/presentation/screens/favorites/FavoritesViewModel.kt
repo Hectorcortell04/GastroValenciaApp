@@ -17,19 +17,23 @@ class FavoritesViewModel(
     private val eventsUseCase: EventsUseCase = EventsUseCase(),
     private val restaurantsUseCase: RestaurantUseCase = RestaurantUseCase()
 ) : ViewModel() {
+    // Lista de eventos favoritos
     var events by mutableStateOf<List<Event>>(emptyList())
         private set
 
+    // Lista de restaurantes favoritos
     var restaurants by mutableStateOf<List<Restaurant>>(emptyList())
         private set
 
+    // Mensaje de error si algo falla
     var errorMessage by mutableStateOf<String?>(null)
         private set
 
+    // Flag para mostrar carga
     var isLoading by mutableStateOf(false)
         private set
 
-
+    // Carga los eventos favoritos del usuario
     fun fetchEvents(context: Context) {
         val userId = UserManager.getUserId(context)
 
@@ -50,8 +54,8 @@ class FavoritesViewModel(
         }
     }
 
-
-     fun fetchRestaurants(context: Context) {
+    // Carga los restaurantes favoritos del usuario
+    fun fetchRestaurants(context: Context) {
         val userId = UserManager.getUserId(context)
 
         if (userId == null) {

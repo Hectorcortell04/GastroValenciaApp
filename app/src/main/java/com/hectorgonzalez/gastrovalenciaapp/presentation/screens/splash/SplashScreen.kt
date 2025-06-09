@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 
+// Pantalla que se ve al entrar en la app
 @Composable
 fun SplashScreen(
     onNavigateToLogin: () -> Unit,

@@ -22,10 +22,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
@@ -87,7 +85,7 @@ fun LoginScreen(
         delay(300)
         showContent = true
     }
-
+    // Contenedor general
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -102,7 +100,7 @@ fun LoginScreen(
             )
             .systemBarsPadding()
     ) {
-        // Imagen de fondo decorativa (opcional)
+        // Imagen de fondo
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -229,7 +227,7 @@ fun LoginScreen(
                             value = password,
                             onValueChange = {
                                 password = it
-                                viewModel.clearError() // Limpiar error al escribir
+                                viewModel.clearError()
                             },
                             label = { Text("Contraseña") },
                             placeholder = { Text("Tu contraseña segura") },
@@ -244,7 +242,9 @@ fun LoginScreen(
                                     onClick = { passwordVisible = !passwordVisible }
                                 ) {
                                     Icon(
-                                        painter = if (passwordVisible) painterResource(R.drawable.ic_eye_open) else painterResource(R.drawable.ic_eye_closed),
+                                        painter = if (passwordVisible) painterResource(R.drawable.ic_eye_open) else painterResource(
+                                            R.drawable.ic_eye_closed
+                                        ),
                                         contentDescription = if (passwordVisible) "Ocultar contraseña" else "Mostrar contraseña"
                                     )
                                 }
@@ -344,7 +344,6 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Footer informativo
             AnimatedVisibility(
                 visible = showContent,
                 enter = fadeIn(

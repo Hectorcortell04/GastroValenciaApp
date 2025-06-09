@@ -43,6 +43,7 @@ fun MyDiscountsScreen(
     onBackClick: () -> Unit,
     viewModel: MyDiscountsViewModel = viewModel()
 ) {
+    // Al entrar en la pantalla, se lanza la carga del descuento del usuario
     LaunchedEffect(userId) {
         viewModel.fetchDiscount(userId)
     }
@@ -79,7 +80,7 @@ fun MyDiscountsScreen(
             }
         }
 
-        // Loading state
+        // Estado "cargando"
         if (viewModel.isLoading) {
             item {
                 Box(
@@ -95,7 +96,7 @@ fun MyDiscountsScreen(
             }
         }
 
-        // Error state
+        // Estado error
         viewModel.errorMessage?.let { errorMessage ->
             item {
                 Card(
@@ -117,12 +118,12 @@ fun MyDiscountsScreen(
             }
         }
 
-        // Content state
+        // Contenido
         viewModel.discount?.let { discountData ->
             // Membership level indicator
             item {
                 MembershipLevelCard(
-                    level = "Basic" // TODO: obtener del membershipLevelId
+                    level = "Basic"
                 )
             }
 
@@ -187,6 +188,7 @@ fun MyDiscountsScreen(
     }
 }
 
+// Tarjeta que muestra el nivel de socio del usuario
 @Composable
 fun MembershipLevelCard(
     level: String,
@@ -231,6 +233,7 @@ fun MembershipLevelCard(
     }
 }
 
+// Tarjeta individual que representa un descuento concreto
 @Composable
 fun DiscountCard(
     discount: String,
@@ -253,7 +256,7 @@ fun DiscountCard(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Discount icon based on type
+            // Icono de descuentos
             Surface(
                 shape = CircleShape,
                 color = MaterialTheme.colorScheme.primaryContainer,
@@ -271,7 +274,7 @@ fun DiscountCard(
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            // Discount text
+            // Texto con la descripción del descuento
             Text(
                 text = discount,
                 style = MaterialTheme.typography.bodyLarge,

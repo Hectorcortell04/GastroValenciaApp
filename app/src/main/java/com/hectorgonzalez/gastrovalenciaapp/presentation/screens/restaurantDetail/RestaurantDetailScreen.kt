@@ -3,7 +3,6 @@ package com.hectorgonzalez.gastrovalenciaapp.presentation.screens.restaurantDeta
 import RestaurantDetailViewModel
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -56,7 +55,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -124,7 +122,7 @@ fun RestaurantDetailScreen(
                     IconButton(
                         onClick = {
                             if (!isLikingInProgress) {
-                                if (restaurant != null){
+                                if (restaurant != null) {
                                     viewModel.toggleLike(context)
                                 }
                             }
@@ -164,6 +162,7 @@ fun RestaurantDetailScreen(
                     CircularProgressIndicator()
                 }
             }
+
             error != null -> {
                 Box(
                     modifier = Modifier
@@ -190,6 +189,7 @@ fun RestaurantDetailScreen(
                     }
                 }
             }
+
             restaurant != null -> {
                 Column(
                     modifier = Modifier
@@ -245,6 +245,7 @@ fun RestaurantDetailScreen(
     }
 }
 
+// Componente que muestra la imágen ampliada
 @Composable
 private fun FullMenuDialog(
     menuImageUrl: String,
@@ -298,7 +299,7 @@ private fun FullMenuDialog(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+// Carrusel de imágenes para mostrar fotos del restaurante
 @Composable
 private fun RestaurantImageCarousel(
     images: List<String>,
@@ -327,7 +328,6 @@ private fun RestaurantImageCarousel(
             )
         }
 
-        // Gradiente para mejorar legibilidad
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -341,7 +341,7 @@ private fun RestaurantImageCarousel(
                 )
         )
 
-        // Chip de tipo de comida
+        // Cuadrito tipo de comida
         AssistChip(
             onClick = onFoodTypeClick,
             colors = AssistChipDefaults.assistChipColors(
@@ -431,6 +431,7 @@ private fun RestaurantImageCarousel(
     }
 }
 
+// Sección con la información principal del restaurante
 @Composable
 private fun RestaurantInfoSection(
     restaurant: Restaurant,
@@ -552,6 +553,7 @@ private fun RestaurantInfoSection(
     }
 }
 
+// Muestra una sección con la imagen del menú
 @Composable
 private fun MenuSection(
     menuImageUrl: String,
@@ -621,6 +623,7 @@ private fun MenuSection(
     }
 }
 
+// Botón de acción principal para reservar mesa
 @Composable
 private fun ActionButtons(
     onReserveClick: () -> Unit,
@@ -638,7 +641,7 @@ private fun ActionButtons(
             enabled = hasWebsite
         ) {
             Icon(
-                painter  = painterResource(R.drawable.ic_calendar),
+                painter = painterResource(R.drawable.ic_calendar),
                 contentDescription = "Sitio web",
                 modifier = Modifier.size(18.dp)
             )
